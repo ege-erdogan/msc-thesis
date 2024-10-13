@@ -1,4 +1,4 @@
-% !BIB TS-program = biber
+
 
 \RequirePackage[l2tabu,orthodox]{nag}
 
@@ -17,7 +17,7 @@
 \newcommand*{\getTitle}{Thesis title}
 \newcommand*{\getTitleGer}{Titel der Abschlussarbeit}
 \newcommand*{\getAuthor}{Author}
-\newcommand*{\getDoctype}{Bachelor's Thesis, Master's Thesis, \ldots}
+\newcommand*{\getDoctype}{Master's Thesis}
 \newcommand*{\getSupervisor}{Supervisor}
 \newcommand*{\getAdvisor}{Advisor}
 \newcommand*{\getSubmissionDate}{Submission date}
@@ -29,7 +29,7 @@
 % (see https://en.wikibooks.org/wiki/LaTeX/Hyperlinks#Problems_with_Links_and_Pages).
 \pagenumbering{alph}
 \input{pages/cover}
-	
+
 \frontmatter{}
 
 \input{pages/title}
@@ -59,6 +59,6 @@
 \listoffigures{}
 \listoftables{}
 \microtypesetup{protrusion=true}
-\printbibliography{}
+\printbibliography
 
 \end{document}
