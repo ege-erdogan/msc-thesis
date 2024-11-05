@@ -37,7 +37,6 @@
 \usepackage[final]{microtype}
 \usepackage{caption}
 \usepackage[printonlyused]{acronym}
-\usepackage[hidelinks]{hyperref} % hidelinks removes colored boxes around references and links
 \AtBeginDocument{%
 	\hypersetup{
 		pdftitle=\getTitle,
@@ -45,6 +44,15 @@
 	}
 }
 \usepackage{ifthen}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{amsfonts}
+
+\usepackage{xcolor}
+\definecolor{standardblue}{rgb}{0.149,0.580,0.871}
+\usepackage[colorlinks,citecolor=standardblue]{hyperref}
+
 
 % for fachschaft_print.pdf
 \makeatletter
@@ -120,3 +128,5 @@
   stringstyle=\color{TUMAccentGreen},
   captionpos=b
 }
+
+\input{shortcuts.tex}
