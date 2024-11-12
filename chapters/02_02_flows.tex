@@ -1,4 +1,42 @@
 % !TeX root = ../main.tex
-% Add the above to each chapter to make compiling the PDF easier in some editors.
+% Add the above to ea  ch chapter to make compiling the PDF easier in some editors.
 
 \chapter{Flow Models}\label{section:flow_models}
+
+\section{Computing Likelihoods} \label{section_computing_likelihoods}
+
+
+In earlier normalizing flows that aim to learn a static mapping between the two distributions \citep{rezendeVariationalInferenceNormalizing2015}, given source samples $x_0 sim p_0$, likelihoods of the generated samples $z = f(x_0) \approx p_1$  can be computed exactly via the change of variables formula
+\begin{equation} \label{eq:static_cov}
+    \log p_1(z) = \log p_0(z) - \log \det \left\vert J_f(z) \right\vert
+\end{equation}
+where $J_f$ is the Jacobian of $f$. Thus, we can obtain exact likelihoods for the generated samples by taking the determinant of the Jacobian of the normalizing flow. Since Jacobian computations can be costly, this has motivated work on designing normalizing flows with easier to compute Jacobians, such as RealNVP \citep{dinhDensityEstimationUsing2017}. 
+
+% Note that the terminology/notation etc are already set here
+In a \textit{continuous normalizing flow} on the other hand, the \textit{instantenous change of variables} formula \citep{chenNeuralOrdinaryDifferential2018a} defines the change in probability mass through time. Given that the vector field $v_t$ is continuous in $t$ and uniformly Lipschitz continuous in $\R^d$, it holds that
+\begin{align} \label{eq:continuous_cov}
+    \frac{d \log p_t(\phi_t(x))}{dt} &= - \divergence(v_t(\phi_t(x))) \\
+                                     &= - \trace \left( \frac{d v_t(\phi_t(x))}{dt} \right)
+\end{align}
+where $\frac{d v_t(\phi_t(x))}{dt} =: J_v(\phi_t(x))$ is the Jacobian of the vector field. Then we integrate over time to compute the full change in probability:
+\begin{equation} \label{eq:full_continuous_cov}
+    \log p_1(\phi_1(x)) = \log p_0(\phi_0(x)) - \int_0^1 \trace(J_v(\phi_t(x))) dt.
+\end{equation}
+Then we can integrate the Jacobian trace of the vector field through time (simultaneously with sampling) to obtain exact likelihoods for the generated samples. 
+
+\subsection{Faster Likelihoods Through Trace Estimation} \label{section:trace_estimation}
+
+However, materializing the full Jacobian of the vector field can be prohibitively expensive, especially if the task is high dimensional (as in our case) since the log determinant computation has a time complexity of $O(d^3)$ \citep{grathwohlFFJORDFreeformContinuous2018} without any restrictions on the structure of the Jacobian. 
+
+To alleviate this problem, \citep{grathwohlFFJORDFreeformContinuous2018} propose to use the \textit{Hutchinson trace estimator} \citep{hutchinsonStochasticEstimatorTrace1990} for an unbiased estimate of the Jacobian trace of a square matrix: 
+\begin{equation} \label{eq:hutchinson}
+    \trace(J_v) = \bbE_{p(\epsilon)} \left[ \epsilon^T J_v \epsilon \right]
+\end{equation}
+where $p(\epsilon)$ is chosen such that $\bbE[\epsilon] = 0$ and $\Cov(\epsilon) = I$, typically a Gaussian or a Rademacher distribution. Then, we can use this estimator in place of the explicit trace computation in Equation \ref{eq:full_continuous_cov} and compute the likelihoods as
+\begin{equation}
+    \log p_1(\phi_1(x)) = \log p_0(\phi_0(x)) - \int_0^1 \bbE_{p(\epsilon)} \left[ \epsilon^T J_v(\phi_t(x)) \epsilon \right] dt.
+\end{equation}
+
+The performance benefit of using the Hutchinson trace estimator results from the fact that the Jacobian-vector product $J_v \epsilon$ can be computed very efficiently by automatic differentiation \citep{baydinAutomaticDifferentiationMachine2018}, giving the whole approach a time complexity of $O(d)$ only. Due to this significant performance improvement and being an unbiased estimate, the Hutchinson trace estimator has been widely used in the diffusion/flow model literature \citep{lipmanFlowMatchingGenerative2023,songScoreBasedGenerativeModeling2021a}.
+
+

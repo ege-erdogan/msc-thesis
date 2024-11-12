@@ -11,9 +11,9 @@ In typical Bayesian fashion, Bayesian deep learning (refer to \citep{mackayBayes
 \begin{equation}
     p(y \vert x, \calD) 
     = \bbE_{\theta \sim p(\theta \vert \calD)} \left[ p(y\vert x, \theta) \right]
-    = \int p(y \vert x, \theta) p(\theta \vert \calD) d\theta.
+    = \int p(y \vert x, \theta) p(\theta \vert \calD) d\theta,
 \end{equation}
-Therefore, Bayesian inference over neural network weights consists of three steps:
+where the prediction is averaged over the posterior over the weights. Note that since the forward pass through the model $p(y \vert x, \theta)$, is deterministic, the uncertainty in predictions results solely from the uncertainty over parameters. To bring things together, Bayesian inference over neural network weights consists of three steps:
 \begin{enumerate}
     \item Specify prior $p(\theta)$.
     \item Compute/sample posterior $p(\theta \vert \calD) \propto p(\calD \vert \theta) p(\theta)$.
@@ -30,6 +30,12 @@ Different architectural decisions also result in different functions, even if th
 We keep this discussion short since the choice of a prior has tangential impact in the rest of the presentation, and we refer to recent reviews such as \citep{fortuinPriorsBayesianDeep2022} for a more detailed treatment of Bayesian neural network priors. 
 
 \section{Inference} \label{section:bayesian_inference}
+
+\begin{itemize}
+    \item Variational methods
+    \item MCMC-based methods
+    \item Transformation-based methods (normalizing flow)
+\end{itemize}
 
 Laplace
 
