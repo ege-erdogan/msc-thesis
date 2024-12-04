@@ -66,11 +66,22 @@ To sum up the discussion in the previous section, a step of training a flow mode
     \item Update $\theta$ with $\nabla_\theta \Lcfm$.
 \end{enumerate}
 
-\subsection{Design Choices} \label{section:design_choices}
+\subsection{Couplings and Conditional Paths} \label{section:design_choices}
 
-\subsubsection{Couplings and Conditional Paths}
+With this framework established, the three main design choices for building a flow matching model are choosing the coupling $q(z)$, the conditional ``ground truth'' vector field $u_t(x \mid z)$, and the conditional probability paths $p_t(x \mid z)$. Starting with an arbitrary source distribution $p_0$ and target distribution $p_1$, \citet{tongImprovingGeneralizingFlowbased2023} propose three different ways of constructing conditional paths from couplings between $p_0$ and $p_1$, of which we focus on two (independent and optimal transport couplings). In all setups, the condition variable $z$ corresponds to a pair $(x_0, x_1)$ of source and target points. 
 
+\textbf{Independent Coupling.} The simplest way of obtaining is to sample independently from $p_0$ and $p_1$; i.e. $q(z) = p_0(x_0) p_1(x_1)$, with the conditional paths and the vector field defined as 
+\begin{align} 
+    p_t(x \mid z) &= \N(x \mid (1-t)x_0 + t x_1, \sigma^2) \label{eq:cond_path} \\
+    u_t(x \mid z) &= x_1 - x_0. \label{eq:cond_vector_field}
+\end{align}
+The conditional paths and the coupling defined this was are easily easy to sample from, but have undesirable properties such as crossing paths which which can lead to high variance in the ground truth vector field for a specific point and time. {\color{orange} Moreover in practice, independent couplings can lead to curved paths that incur higher integration errors, as there is no notion of straightness considered in this formulation.}
 
+\textbf{Optimal Transport.} To obtain straighter and shorter paths that are easier to integrate, \citet{tongImprovingGeneralizingFlowbased2023} propose to use the static 2-Wasserstein optimal transport map $\pi$ as the coupling; i.e.
+\begin{equation}
+    q(z) = \pi(x_0, x_1),
+\end{equation}
+with the conditional paths and vector field defined as in Equations \ref{eq:cond_path} and \ref{eq:cond_vector_field}. The flow model thus obtained solves the dynamic optimal OT problem as $\sigma^2 \to 0$ (Proposition 3.4 in \citep{tongImprovingGeneralizingFlowbased2023}). However, computing the exact OT map for the entire dataset is challenging, especially in high dimensions as in our problem. It can instead be approximated using mini-batches \citep{fatrasMinibatchOptimalTransport2021}. This means at the end the OT problem is solved only to an approximation, but nevertheless results in straighter paths that cross less often, since intuitively an $x_0 \sim p_0$ is more likely to be coupled with $x_1 \sim p_1$ closer to it rather than an $x_1$ chosen uniformly random.
 
 \subsection{Connection to Diffusion (maybe remove)}
 
