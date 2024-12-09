@@ -75,7 +75,7 @@ With this framework established, the three main design choices for building a fl
     p_t(x \mid z) &= \N(x \mid (1-t)x_0 + t x_1, \sigma^2) \label{eq:cond_path} \\
     u_t(x \mid z) &= x_1 - x_0. \label{eq:cond_vector_field}
 \end{align}
-The conditional paths and the coupling defined this was are easily easy to sample from, but have undesirable properties such as crossing paths which which can lead to high variance in the ground truth vector field for a specific point and time. {\color{orange} Moreover in practice, independent couplings can lead to curved paths that incur higher integration errors, as there is no notion of straightness considered in this formulation.}
+The conditional paths and the coupling defined this was are easily easy to sample from, but have undesirable properties such as crossing paths which which can lead to high variance in the ground truth vector field for a specific point and time. Moreover in practice, independent couplings can lead to curved paths that incur higher integration errors, as there is no notion of straightness considered in this formulation.
 
 \textbf{Optimal Transport.} To obtain straighter and shorter paths that are easier to integrate, \citet{tongImprovingGeneralizingFlowbased2023} propose to use the static 2-Wasserstein optimal transport map $\pi$ as the coupling; i.e.
 \begin{equation}
