@@ -83,9 +83,47 @@ The conditional paths and the coupling defined this was are easily easy to sampl
 \end{equation}
 with the conditional paths and vector field defined as in Equations \ref{eq:cond_path} and \ref{eq:cond_vector_field}. The flow model thus obtained solves the dynamic optimal OT problem as $\sigma^2 \to 0$ (Proposition 3.4 in \citep{tongImprovingGeneralizingFlowbased2023}). However, computing the exact OT map for the entire dataset is challenging, especially in high dimensions as in our problem. It can instead be approximated using mini-batches \citep{fatrasMinibatchOptimalTransport2021}. This means at the end the OT problem is solved only to an approximation, but nevertheless results in straighter paths that cross less often, since intuitively an $x_0 \sim p_0$ is more likely to be coupled with $x_1 \sim p_1$ closer to it rather than an $x_1$ chosen uniformly random.
 
-\subsection{Connection to Diffusion (maybe remove)}
+\section{Riemannian Flow Matching} \label{sec:riemannian_fm}
 
-\subsection{Extensions (mini lit review of example uses)}
+When our data lies on a manifold, flow matching can be extended to define a flow over the manifold as well. Such an approach can both lead to a better scalable generative model by reducing the effective dimensionality of the problem, and make learning easier by introducing a strong inductive bias to the problem.  Discrete and continuous normalizing flows have previously been adapted to Riemannian manifolds \citep{gemiciNormalizingFlowsRiemannian2016,mathieuRiemannianContinuousNormalizing2020,louNeuralManifoldOrdinary2020}. In this section, we first give a quick overview of Riemannian manifolds (we refer to textbooks on the topic such as \citep{johnm.leeIntroductionRiemannianManifolds2018} for a more rigorous treatment), and then explain how an ODE over a Riemannian manifold can be learned following the framework of Riemannian flow matching \citep{chenRiemannianFlowMatching2023}.\footnote{The presentation in this section is additionally based on the Geometric Generative Models tutorial by Joey Bose, Alexander Tong, and Heli Ben-Hamu at the 2024 Learning On Graphs Conference.} 
+
+\subsection{A Brief Review of Riemannian Manifolds}
+
+\begin{figure}[t!]
+    \missingfigure[figwidth=\linewidth, figheight=6cm]{DIAGRAM WITH MANIFOLDS AND EXP LOG MAPS ETC.}
+    \caption{\label{fig:manifolds} Depiction of manifolds with exp and log maps etc.}    
+\end{figure}
+
+Intuitively, a smooth \textit{manifold} $M$ is a smooth topological space that is locally Euclidean. The local Euclidean structure is represented by \textit{charts} mapping open sets $U \subset M$ to $\R^n$. A set of charts covering the entire manifold is called an \textit{atlas}, and smoothness arises from the transitions between overlapping charts being smooth functions. Each point $x \in M$ is equipped with a tangent space $T_x M$ that is a vector space containing vectors tangent to $M$. A Riemannian manifold also contains a Riemannian metric $g$ that defines an inner product $\langle u, v \rangle_g = u^T G v$ for $u, v \in T_x M$ and positive definite matrix $G$. A metric most importantly enables us to consider angles and distances over the manifold as $\Vert u \Vert_g = \sqrt{\langle u, u\rangle_g} = \sqrt{u^T G u}$ and $\cos \theta = \frac{\langle u, v \rangle_g}{\Vert u \Vert_g \Vert v \Vert_g}$. 
+
+A \textit{curve} is a smooth function $\gamma: [0, 1] \to M$, and tangent vectors $v \in T_x M$ can be expressed as time derivatives $\dot \gamma(t)$ of curves with $\gamma(t) = x$. Using the metric $g$, we can measure the length of a curve by computing the length of the tangent vector at each point along the curve:
+\begin{equation}
+    \vert \gamma \vert =
+    \int_0^1 \Vert \dot \gamma (t) \Vert_g^2 dt.
+\end{equation}
+The ``shortest'' curve in this sense connecting two points $x,y\in M$ is called a \textit{geodesic}. We can thus define a distance between two points as the length of a (not necessarily unique) geodesic connecting them. 
+
+A manifold is also equipped with three operations that we will make use of: the \textit{exponential map}, the \textit{logarithmic} map, and \textit{parallel transport}. The exponential map $\exp_x: T_x M \to M$ at a point $x \in M$ maps a tangent vector $v$ to the point $\gamma(1) \in M$ where $\gamma$ is the unique geodesic satisfying $\gamma(0) = x$ and $\dot \gamma(0) = v$. The logarithmic map $\log_x: M \to T_x M$ maps a point $y \in M$ back to the tangent vector $v := \dot \gamma (0)$. It is generally the inverse of the exponential map. Finally the parallel transport map $\text{PT}_{x \to y}: T_x M \to T_y M$ transports a tangent vector $v := \dot \gamma(0)$ along the geodesic with $\gamma(1) = y$ keeping the lengths and angles between the transported vectors constant. Together, these three operations allow us to move along geodesics with tangent vectors as the velocities, and transport tangent vectors to the same tangent space to be able to compute distances between them, which are all steps required to build a flow model over a Riemannian manifold. 
+
+\subsection{Flow Models over Manifolds}
+
+Riemannian flow matching (RFM) \citep{chenRiemannianFlowMatching2023} extends the flow matching framework to Riemannian manifolds. As the three key design choices, we need to define a coupling $q$, conditional probability paths $p_t$, and a conditional vector field $u_t$. 
+
+A coupling can be defined simply by sampling $x_0 \sim p_0$ and $x_1 \sim p_1$ independently, or with a mini-batch optimal transport map with the distances defined above using geodesics. For $t\in [0,1]$, the geodesic interpolation $x_t \sim p_t(x_t \mid x_0, x_1)$ (analogous to linear interpolation in Euclidean space) between $x_0$ and $x_1$ is computed as 
+\begin{equation}
+    x_t := \exp_{x_0}(t \log_{x_0} x_1)
+\end{equation}
+and the conditional vector field $u_t$ as
+\begin{equation}
+    u_t(x_t \mid x_0, x_1) := \frac{\log_{x_t}x_1}{1 - t}.
+\end{equation}
+Finally to solve the ODE, we compute one Euler integration step as
+\begin{align}
+    dx_t &= u_t(x_t)dt \\
+    x_{t + 1} &= \exp_{x_t}(v_\theta(t, x_t) \Delta t)
+\end{align}
+where $\Delta t$ is the step size. 
+
 
 \section{Sampling / Integration} \label{section:sampling_integration}
 
