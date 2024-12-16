@@ -81,15 +81,14 @@ where each weight matrix has two components, one for edges and one for nodes to 
 \end{equation}
 The graph can be taken to be fully-connected, ignoring the original structure, but the architecture can be adapted to other forms of connectivity just by changing which nodes and edges each update is conditioned on. 
 
-\section{Generative Models}
+\section{Weight-Space Generative Models}
 
-{\color{orange}
-\begin{itemize}
-    \item \citep{peeblesLearningLearnGenerative2022}
-    \item \citep{erkocHyperDiffusionGeneratingImplicit2023}
-    \item \citep{schurholtHyperRepresentationsLearningPopulations2024a}
-    \item \citep{kruegerBayesianHypernetworks2018}
-\end{itemize}
-}
+One of the earliest approaches to using a neural network to learn a generative model in weight-space is the \textit{Bayesian Hypernetworks} of \citet{kruegerBayesianHypernetworks2018}. A Bayesian hypernetwork converts noise to a sample weight $\theta$ from the approximate posterior $q(\theta)$. Making the hypernetwork invertible makes it possible to compute the log-determinant of its inverse Jacobian, similar to a normalizing flow. The hypernetwork and the base network can then be trained using backpropagation as a single model, where the hypernetwork outputs weights and the primary network is used to evaluate the ``true'' likelihood in a differentiable way. 
+
+Although learning a generative model only with access to a likelihood function is still a very active research area (e.g. works such as \citep{tongImprovingGeneralizingFlowbased2023}), simulation-free regression objectives such as score/flow-matching have seen increasing interest, as they are cheaper to optimize and can avoid certain failure modes of likelihood-based objectives such as mode-seeking. This interest has also led to various applications of such methods in weight-space.
+
+Using the denoising diffusion objective, \citet{peeblesLearningLearnGenerative2022} train a GPT-2 model \citep{radfordLanguageModelsAre2019} (omitting causal masking) over neural network weights, where each token is a vector of weights. The model, named \textbf{G.pt}, is trained using checkpoints from a large number of training runs augmented with permutations to obtain different representations of the same function. The model can then also be ``prompted'' for specific losses and succeeds at generating weights that correlate with the prompted losses. 
+
+In an alternative approach, \citet{schurholtScalableVersatileWeight2024} aim to train an autoencoder that learns to map neural network weights to a lower-dimensional latent space, which can then facilitate various downstream tasks including generation. Each complete weight vector is tokenized and split into chunks, and each chunk has a separate latent representation. New weights are then sampled by fitting a kernel density estimator around the embeddings of the weights given as a prompt. The samples can then be iteratively refined by using the best samples as the new prompt and repeating this procedure. 
 
 
