@@ -1,0 +1,25 @@
+% !TeX root = ../main.tex
+% Add the above to each chapter to make compiling the PDF easier in some editors.
+
+\chapter{Experimental Setups}\label{appendix:experimental_setups}
+
+\section*{Flow Between Gaussians (Section \ref{sec:gaussian_flow})}
+
+\subsection*{Data}
+
+\begin{itemize}
+    \item $p_0 = \N(0, \mathbf{I}), p_1 = \N(1, \mathbf{I})$. 
+    \item MLP: 30 - 16 - 16 - 2.
+\end{itemize}
+
+\subsection*{Architecture}
+\begin{itemize}
+    \item Relational Transformer \citep{diaoRelationalAttentionGeneralizing2023,kofinasGraphNeuralNetworks2024} with 5 layers and $d_E = 32$, GeLU activations \citep{hendrycksGaussianErrorLinear2023a}, one attention head. 
+\end{itemize}
+
+\subsection*{Flow/Training}
+\begin{itemize}
+    \item Independent coupling, $t \sim \text{Beta}(1, 2)$, Gaussian probability path with $\sigma = 0.001$, $x_1$ prediction.
+    \item Trained for $20,000$ iterations with batch size 16. 
+\end{itemize}
+
