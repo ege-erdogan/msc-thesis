@@ -67,7 +67,7 @@ To sample from our flow models, we solve the ODE (Equation \ref{eq:ode}) using a
 
 \subsection{Guidance}
 
-We can also guide the sampling process with loss gradients from the base task, i.e. the energy function \citep{wangProteinConformationGeneration2024,kulyteImprovingAntibodyDesign2024,yuForceGuidedBridgeMatching2024a}, so that for base model $f$ and velocity model $v_\theta$ Euler updates take the form 
+We can also guide the sampling process with loss gradients from the base task \citep{wangProteinConformationGeneration2024,kulyteImprovingAntibodyDesign2024,yuForceGuidedBridgeMatching2024a}, so that for base model $f$ and velocity model $v_\theta$ Euler updates take the form 
 \begin{equation}
     x_{t + \Delta t} = x_t + \left( v_\theta(t, x_t) + \lambda \nabla_{x_t}\mathcal{L}(f, x_t) \right) \Delta t
 \end{equation}
