@@ -41,7 +41,7 @@ An MLP with $L$ layers, consisting of weight matrices $\{ \W^{(1)},...,\W^{(L)} 
 
 For convolutional neural networks (CNNs), the permutation symmetries occur at the level of individual channels. Permuting the filters in one layer permutes the channels at the subsequent layer, and permuting the filters of the subsequent layer with the same permutation preserves the function being computed. We can obtain this symmetry as a graph by associating nodes with individual channels and edges with the filters, where a single edge's features correspond to the flattened weights in a zero-padded filter to make all edge features the same size. 
 
-\subsubsection{Learning over Neural Network Graphs}
+\subsubsection{Learning over Neural Network Graphs} \label{sec:learning_graphs}
 
 A standard GNN can be used to learn a function over NN weights with the graph constructed as above. However, not all GNNs incorporate edge features. \citet{kofinasGraphNeuralNetworks2024} propose two architectures, one extending the \textit{Principal Neighborhood Aggregation} network (PNA) \citep{corsoPrincipalNeighbourhoodAggregation2020} with edge updates, and another a slightly updated version of a \textit{Relational Transformer} \citep{diaoRelationalAttentionGeneralizing2023}. 
 

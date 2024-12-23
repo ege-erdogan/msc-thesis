@@ -10,7 +10,7 @@ We train our flow using \textit{flow matching} \citep{lipmanFlowMatchingGenerati
 \section{Flow Matching} \label{section:flow_matching}
 
 Flow matching, first proposed in \citep{lipmanFlowMatchingGenerative2023,albergoStochasticInterpolantsUnifying2023,liuFlowStraightFast2022} aims to solve the problem of \textit{dynamic transport}, i.e. finding a time-dependent vector field to transport the source (prior) distribution $p_0$ to the target (data) distribution $p_1$. More formally, the vector field $u_t: [0,1] \times \R^d \to \R^d$ leads to the ordinary differential equation (ODE)
-\begin{equation}
+\begin{equation} \label{eq:ode}
     dx = u_t(x) dt
 \end{equation}
 and induces a \textit{flow} $\phi: [0,1] \times \R^d \to \R^d$ that gives the solution to the ODE at time $t$ with starting point $x_0$, such that 
