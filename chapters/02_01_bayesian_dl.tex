@@ -8,7 +8,7 @@ A primary use case for a generative model over neural network weights is in Baye
 \section{General Concepts} \label{section:bayesian_concepts}
 
 In typical Bayesian fashion, Bayesian deep learning (refer to \citep{mackayBayesianMethodsAdaptive1992, nealBayesianLearningNeural1996} for foundational work and \citep{goanBayesianNeuralNetworks2020,arbelPrimerBayesianNeural2023} for more recent reviews) aims to quantify the uncertainty in neural networks through probability distributions over their parameters, rather than obtaining a single solution by an SGD-like optimization method. Then, given the \textit{posterior} distribution $p(\theta \vert \calD)$ over weights $\theta$ conditioned on the dataset $\calD$, predictions are obtained via \textit{Bayesian model averaging}:
-\begin{equation}
+\begin{equation} \label{eq:model_averaging}
     p(y \vert x, \calD) 
     = \bbE_{\theta \sim p(\theta \vert \calD)} \left[ p(y\vert x, \theta) \right]
     = \int p(y \vert x, \theta) p(\theta \vert \calD) d\theta,
