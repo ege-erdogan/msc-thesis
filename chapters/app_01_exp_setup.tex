@@ -20,7 +20,7 @@
 \subsection*{Flow/Training}
 \begin{itemize}
     \item Independent coupling, $t \sim \text{Beta}(1, 2)$, Gaussian probability path with $\sigma = 0.001$, $x_1$ prediction.
-    \item Trained for 20,000 iterations with batch size 16. 
+    \item Trained for 20,000 iterations with batch size 16, using the Adam optimizer with initia learning rate 0.001.
 \end{itemize}
 
 \section*{UCI Classification (Section \ref{sec:uci_classification})}
@@ -32,36 +32,36 @@
     \item We use the same MLP architecture as the Gaussian experiments. 
 \end{itemize}
 
-{\color{orange}\subsection*{Flow Architecture}
+\subsection*{Flow Architecture}
 \begin{itemize}
-    \item Relational Transformer \citep{diaoRelationalAttentionGeneralizing2023,kofinasGraphNeuralNetworks2024} with 5 layers and $d_E = 32$, GeLU activations \citep{hendrycksGaussianErrorLinear2023a}, one attention head. 
+    \item Relational Transformer \citep{diaoRelationalAttentionGeneralizing2023,kofinasGraphNeuralNetworks2024} with 5 layers and $d_E = 64$, GeLU activations \citep{hendrycksGaussianErrorLinear2023a}, one attention head. 
 \end{itemize}
 
 \subsection*{Flow/Training}
 \begin{itemize}
-    \item Independent coupling, $t \sim \text{Beta}(1, 2)$, Gaussian probability path with $\sigma = 0.001$, $x_1$ prediction.
-    \item Trained for $20,000$ iterations with batch size 16. 
-\end{itemize}}
+    \item $t \sim \text{Beta}(1, 2)$, Gaussian probability path with $\sigma = 0.0001$, $x_1$ prediction.
+    \item Trained for 250,000 iterations with batch size 32, using the Adam optimizer with initia learning rate 0.001.
+\end{itemize}
 
 
 \section*{MNIST Classification (Section \ref{sec:mnist_classification})}
 
 \subsection*{Data}
 
-% \begin{itemize}
-%     \item $p_0 = \N(0, \mathbf{I}), p_1 = \N(1, \mathbf{I})$. 
-%     \item MLP: 30 - 16 - 16 - 2.
-% \end{itemize}
+\begin{itemize}
+    \item $p_0 = \N(0, 0.1 \mathbf{I})$. For the target samples, we independently train 50 models for 25 epochs using SGD with momentum 0.9, learning rate 0.1, and weight decay 0.00001. We collect one sample every 10 iterations, discarding the first 5 epochs. 
+    \item The base model is an MLP with 784 input and 10 output dimensions, and one hidden layer of 10 units. 
+\end{itemize}
 
 \subsection*{Flow Architecture}
-% \begin{itemize}
-%     \item Relational Transformer \citep{diaoRelationalAttentionGeneralizing2023,kofinasGraphNeuralNetworks2024} with 5 layers and $d_E = 32$, GeLU activations \citep{hendrycksGaussianErrorLinear2023a}, one attention head. 
-% \end{itemize}
+\begin{itemize}
+    \item Relational Transformer \citep{diaoRelationalAttentionGeneralizing2023,kofinasGraphNeuralNetworks2024} with 5 layers and $d_E = 32$, GeLU activations \citep{hendrycksGaussianErrorLinear2023a}, one attention head. 
+\end{itemize}
 
 \subsection*{Flow/Training}
-% \begin{itemize}
-%     \item Independent coupling, $t \sim \text{Beta}(1, 2)$, Gaussian probability path with $\sigma = 0.001$, $x_1$ prediction.
-%     \item Trained for $20,000$ iterations with batch size 16. 
-% \end{itemize}
+\begin{itemize}
+    \item $t \sim \text{Beta}(1, 2)$, Gaussian probability path with $\sigma = 0.00001$, $x_1$ prediction.
+    \item Trained for $100,000$ iterations with batch size 8. 
+\end{itemize}
 
 
