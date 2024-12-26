@@ -2,3 +2,16 @@
 % Add the above to each chapter to make compiling the PDF easier in some editors.
 
 \chapter{Discussion}\label{chapter:discussion}
+
+{\color{TUMBlue}
+
+\begin{itemize}
+    \item There is no universal symmetry of neural networks, so symmetries should be taken into account for individual architectures, based on teh connectivity and the activations like we do for ReLU MLPs here. There is also work on discovering symmetries in neural networks automatically \citep{zhaoFindingSymmetryNeural2024}. And these are only the data-independent symmetries. Some symmetries can also be dependent on the data. 
+    \item Although we do guidance only with the original task gradient, any differentiable function of neural network weights can be used to guide the sampling process, such as regularization, or measuring a certain property of the weights such as adversarial robustness. 
+    \item Other uses of generative models in weight space, including implicit neural representations? 
+    \item Other ways of training? 
+    \item Other constraints in weight space, like enforcing in/equivariance.
+    \item Wasserstein flow matching and other similar things and training on multiple datasets. 
+\end{itemize}
+
+}

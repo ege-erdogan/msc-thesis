@@ -9,10 +9,30 @@
 
 \begin{itemize}
     \item $p_0 = \N(0, \mathbf{I}), p_1 = \N(1, \mathbf{I})$. 
-    \item MLP: 30 - 16 - 16 - 2.
+    \item The model is an MLP with dimensions 30 - 16 - 16 - 2 and ReLU activations. 
 \end{itemize}
 
-\subsection*{Architecture}
+\subsection*{Flow Architecture}
+\begin{itemize}
+    \item Relational Transformer \citep{diaoRelationalAttentionGeneralizing2023,kofinasGraphNeuralNetworks2024} with 5 layers and $d_E = 32$, GeLU activations \citep{hendrycksGaussianErrorLinear2023a}, one attention head. 
+\end{itemize}
+
+\subsection*{Flow/Training}
+\begin{itemize}
+    \item Independent coupling, $t \sim \text{Beta}(1, 2)$, Gaussian probability path with $\sigma = 0.001$, $x_1$ prediction.
+    \item Trained for 20,000 iterations with batch size 16. 
+\end{itemize}
+
+\section*{UCI Classification (Section \ref{sec:uci_classification})}
+
+\subsection*{Data}
+
+\begin{itemize}
+    \item $p_0 = \N(0, 0.1 \mathbf{I})$. To obtain samples from $p_1$, we sample 100 models from $p_0$ and train each independently for 50 epochs with Adam. We ignore the first 10 epochs, and record one sample every four iterations after that. 
+    \item We use the same MLP architecture as the Gaussian experiments. 
+\end{itemize}
+
+{\color{orange}\subsection*{Flow Architecture}
 \begin{itemize}
     \item Relational Transformer \citep{diaoRelationalAttentionGeneralizing2023,kofinasGraphNeuralNetworks2024} with 5 layers and $d_E = 32$, GeLU activations \citep{hendrycksGaussianErrorLinear2023a}, one attention head. 
 \end{itemize}
@@ -21,5 +41,27 @@
 \begin{itemize}
     \item Independent coupling, $t \sim \text{Beta}(1, 2)$, Gaussian probability path with $\sigma = 0.001$, $x_1$ prediction.
     \item Trained for $20,000$ iterations with batch size 16. 
-\end{itemize}
+\end{itemize}}
+
+
+\section*{MNIST Classification (Section \ref{sec:mnist_classification})}
+
+\subsection*{Data}
+
+% \begin{itemize}
+%     \item $p_0 = \N(0, \mathbf{I}), p_1 = \N(1, \mathbf{I})$. 
+%     \item MLP: 30 - 16 - 16 - 2.
+% \end{itemize}
+
+\subsection*{Flow Architecture}
+% \begin{itemize}
+%     \item Relational Transformer \citep{diaoRelationalAttentionGeneralizing2023,kofinasGraphNeuralNetworks2024} with 5 layers and $d_E = 32$, GeLU activations \citep{hendrycksGaussianErrorLinear2023a}, one attention head. 
+% \end{itemize}
+
+\subsection*{Flow/Training}
+% \begin{itemize}
+%     \item Independent coupling, $t \sim \text{Beta}(1, 2)$, Gaussian probability path with $\sigma = 0.001$, $x_1$ prediction.
+%     \item Trained for $20,000$ iterations with batch size 16. 
+% \end{itemize}
+
 
