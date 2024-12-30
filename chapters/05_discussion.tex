@@ -3,15 +3,34 @@
 
 \chapter{Discussion}\label{chapter:discussion}
 
-{\color{TUMBlue}
+\section{Future Directions}
 
+While we have demonstrated that generative models in weight-space trained via the flow matching objective can generate high-quality samples and that taking into account the geometry of the neural network weights can make such flows more effective, applying modern generative models to neural network weights is still an active problem with many fruitful potential future directions. {\color{cyan} I am not happy with this, maybe change after the rest is done.}
+
+\subsection{More Fine-Grained Geometric Considerations}
+
+Our flows so far are built for MLPs and only take into account the permutation symmetries between subsequent layers and scaling symmetries resulting from the use of ReLU activations. However, as outlined in previous work \citep{kofinasGraphNeuralNetworks2024,limGraphMetanetworksProcessing2023}, different architectural choices such as convolutions, residual connections, or transformer blocks induce different kinds of symmetries that can be captured by constructing the neural graphs accordingly. The same GNN architectures, such as the Relational Transformer we have used, can then be used for learning tasks over these graphs. 
+
+Different activation functions also induce different symmetries \citep{godfreySymmetriesDeepLearning2022} which can be used to embed neural networks into different manifolds, similar to our embedding of ReLU MLPs on a product of hyperspheres following \citep{pittorinoDeepNetworksToroids2022}. Since generative modeling frameworks such as flow matching can readily be applied to different manifolds \citep{chenRiemannianFlowMatching2023}, including the use of data-dependent metrics \citep{kapusniakMetricFlowMatching2024}, extending our flow models to different kinds of symmetries represents another potentially valuable line of work. 
+
+Another future direction related to symmetries in weight-space is to account for data-dependent symmetries \citep{zhaoSymmetriesFlatMinima2023} that arise from the data the model is trained on rather than the static symmetries in the previous paragraph that are valid for all instantiations of the same architecture. Recent work attempting to find these symmetries in an automated way \citep{zhaoFindingSymmetryNeural2024} can also be useful building blocks in this light. 
+
+Finally, certain functional constraints in neural networks such as group equivariance are often imposed through constraints on the neural networks' weights \citep{weilerEquivariantCoordinateIndependent2023}. If the base model has such constraints, accounting for them while designing the flow as well could reduce the effective dimensionality of the problem considerably and lead to more effcient flows. 
+
+\subsection{Generative Modeling and Training}
+
+While each our flows is trained on a single architecture and dataset to push-forward a single source distribution to a single target distribution, a single flow that could potentially learn to map different source distributions (e.g. corresponding to the same base architecture on different datasets, or different architectures on the same dataset) could be a more directly useful tool. This would essentially correspond to a setting where the model learns to model a vector field not in weight-space, but in the space of probability distributions. Generalizations of the flow matching framework to this setting, such as Meta Flow Matching \citep{atanackovicMetaFlowMatching2024a} and Wasserstein Flow Matching \citep{havivWassersteinFlowMatching2024} could be useful building blocks for such a flow, as well as the publicly available model zoos \citep{schurholtModelZoosDataset2022}. This approach could lead to weight-space ``foundation models'' that are trained over a diverse set of tasks and can be adapted to specific use cases by fine-tuning on a single task. While this would be instance of meta-learning \citep{hospedalesMetaLearningNeuralNetworks2022}, it would be have the added benefit of obtaining a probability distribution over solutions rather than point estimates. 
+
+Furthermore, the requirement of sample-based training can also be relaxed by utilizing recent work on generative modeling not necessarily requiring samples \citep{vargasTransportMeetsVariational2023,akhound-sadeghIteratedDenoisingEnergy2024}. In particular, iDEM \citep{akhound-sadeghIteratedDenoisingEnergy2024} learns a sampler with access to the energy function and its gradient (and optionally samples from the posterior) without having to simulate the forward and backward trajectories of the sampling process, making it potentially useful in high-dimensional spaces such as neural network weights. 
+
+\subsection{Sampling and Guidance}
+
+While we sample using an Euler ODE solver and perform guidance during sampling only using the base task gradients, the sampling phase has a richer design space that can be utilized to obtain faster and more controllable flows. To begin with, higher-order ODE solvers can be used to reduce the approximation error to the learned vector field at the cost of longer sampling times. Distillation methods such as Flow Map Matching \citep{boffiFlowMapMatching2024} and Consistency Flow Matching \citep{yangConsistencyFlowMatching2024} can be utilized to instead speed up the sampling process.  
+
+Using a generative modeling framework such as flow matching also enables guidance methods beyond using task gradients. First, any differentiable objective can be used in place of the task loss to guide the sampling process. Performing classifier-free guidance is also possible for flow models \citep{zhengGuidedFlowsGenerative2023}, to instead condition the sampling process on a variable such as the desired loss, as also done in weight-space with diffusion models in \citet{peeblesLearningLearnGenerative2022}. Finally an alternative conditioning approach in flow matching is to differentiate through the ODE sampling process to optimize the initial point $x_0$ so that the solution $x_1$ minimizes a loss function \citep{ben-hamuDFlowDifferentiatingFlows2024}. This and future work for controllable sampling in flow models can be adapted to weight-space to condition flows on desired quantities or objectives such as adversarial robustness. 
+
+\subsection{Use Cases}
 \begin{itemize}
-    \item There is no universal symmetry of neural networks, so symmetries should be taken into account for individual architectures, based on teh connectivity and the activations like we do for ReLU MLPs here. There is also work on discovering symmetries in neural networks automatically \citep{zhaoFindingSymmetryNeural2024}. And these are only the data-independent symmetries. Some symmetries can also be dependent on the data. 
-    \item Although we do guidance only with the original task gradient, any differentiable function of neural network weights can be used to guide the sampling process, such as regularization, or measuring a certain property of the weights such as adversarial robustness. 
-    \item Other uses of generative models in weight space, including implicit neural representations? 
-    \item Other ways of training? 
-    \item Other constraints in weight space, like enforcing in/equivariance.
-    \item Wasserstein flow matching and other similar things and training on multiple datasets. 
+    \item implicit neural representations, but not learning
+    \item 
 \end{itemize}
-
-}
