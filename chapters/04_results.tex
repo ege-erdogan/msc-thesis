@@ -153,13 +153,23 @@ Figure \ref{fig:mnist_steps} shows how sample quality varies with the number of 
 
 \begin{figure}[t!]
     \centering
-    \includegraphics[width=0.7\linewidth]{figures/mnist/mnist_model_averaging.png}
-    \caption{\label{fig:mnist_averaging}\textbf{Accuracy of the predictions averaged over various numbers of samples from the flows' pushforward distributions.} The Euclidean flow shows the highest accuracy, reaching the accuracy of individual SGD-optimized weights.} 
+    \begin{subfigure}{0.55\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{figures/mnist/mnist_model_averaging.png}
+        \caption{Independent Couplings}
+    \end{subfigure}
+    \begin{subfigure}{0.43\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{figures/mnist/mnist_model_averaging_OT.png}
+        \caption{OT Couplings}
+    \end{subfigure}
+    % \includegraphics[width=0.7\linewidth]{figures/mnist/mnist_model_averaging.png}
+    \caption{\label{fig:mnist_averaging}\textbf{Accuracy of the predictions averaged over various numbers of samples from the flows' pushforward distributions, comparing independent and OT couplings.} The Euclidean flow shows the highest accuracy, reaching the accuracy of individual SGD-optimized weights.} 
 \end{figure}
 
-We now evaluate the predictive performance of the sampled weights after Bayesian model averaging; i.e. for each flow, we sample from its pushforward distribution $\hat p_1 (\theta)$ and compute a Monte Carlo estimate for the expectation $\bbE_{\hat p_1 (\theta)} \left[ p(y\vert x, \theta) \right]$, as in Equation \ref{eq:model_averaging}. Figure \ref{fig:mnist_averaging} displays the accuracy of predictions averaged over increasing numbers of samples from $\hat p_1$. The Euclidean flow results in highest accuracies, noticeably reaching the accuracy of individual SGD-optimized weights. Normalized and Geometric flows, while comparable to the Euclidean flow in invididual samples' quality (Table \ref{tab:mnist_class_table}), are considerably less accurate. This is also supported by 
+We now evaluate the predictive performance of the sampled weights after Bayesian model averaging; i.e. for each flow, we sample from its pushforward distribution $\hat p_1 (\theta)$ and compute a Monte Carlo estimate for the expectation $\bbE_{\hat p_1 (\theta)} \left[ p(y\vert x, \theta) \right]$, as in Equation \ref{eq:model_averaging}. Figure \ref{fig:mnist_averaging} displays the accuracy of predictions averaged over increasing numbers of samples from $\hat p_1$, comparing our three flows as well as independent and mini-batch OT couplings. With independent couplings, the Euclidean flow results in the highest acuracies, noticeably reaching the accuracy of individual SGD-optimized weights. 
 
-{\color{red} Explain after maybe getting the OT PP results.}
+Training the flows with OT couplings improves the predictive performance of all three after model averaging. The improvement for the Geometric flow is more significant than that of the Euclidean and Normalized flows, moving from $\sim87\%$ to $~94\%$. This supports the results in Table \ref{tab:mnist_class_table} that the Geometric flow benefits the most from OT couplings. 
 
 \section{Transferability to Other Tasks} \label{sec:task_generalization}
 
@@ -202,7 +212,6 @@ Next, we evaluate if the samples from the MNIST flows obtained without any guida
         \centering
         \includegraphics[width=\linewidth]{figures/mnist/mnist_init_acc.png}
         \caption{Test Accuracy}
-        
     \end{subfigure}
     \begin{subfigure}{0.47\linewidth}
         \centering
@@ -212,5 +221,6 @@ Next, we evaluate if the samples from the MNIST flows obtained without any guida
     \caption{\label{fig:mnist_init}\textbf{Optimization trajectories of Adam on Fashion-MNIST with initial weights sampled from an isotropic Gaussian and the Euclidean flow trained on MNIST weights.} } 
 \end{figure}
 
+{\color{red} EXPLAIN}
 
 

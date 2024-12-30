@@ -5,14 +5,15 @@
 
 Symmetries in data, such as rotation symmetries in molecules or translation symmetries in images, can be used to obtain useful inductive biases for ML models \citep{bronsteinGeometricDeepLearning2021,weilerEquivariantCoordinateIndependent2023}. By restricting the search space to functions that respect those symmetries, such inductive biases make training more data-efficient \citep{brehmerDoesEquivarianceMatter2024}. Since our data modality is neural network weights, taking the symmetries of neural networks into account can likewise make learning in weight space more effective. 
 
-\begin{figure}[t!]
-    \missingfigure[figwidth=\linewidth, figheight=6cm]{Diagram with permutation and scaling symmetries.}
-    \caption{\label{fig:nn_sym} Symmetries of neural networks.}    
-\end{figure}
-
 Given a neural network $f$ with parameters $\theta$, we define a \textit{symmetry} as an operation $\phi$ that leaves the function computed by the neural network unchanged; i.e. $f_{\phi(\theta)}(x) = f_\theta(x)$. We are further interested only in the static symmetries that hold for any $\theta$ and thus can more reliably be used as inductive biases, rather than dynamic symmetries specific to a certain value of $\theta$. Such symmetries of neural network weights have been studied for a long time \citep{hecht-nielsenALGEBRAICSTRUCTUREFEEDFORWARD1990}, and are still key considerations for understanding the loss landscape and training dynamics of neural networks \citep{breaWeightspaceSymmetryDeep2019a,simsekGeometryLossLandscape2021,limEmpiricalImpactNeural2024,zhaoIMPROVINGCONVERGENCEGENERALIZATION2024}.
 
 \section{Permutation and Scaling Symmetries of Neural Networks} \label{sec:perm_and_scale_sym}
+
+\begin{figure}[t!]
+    \centering
+    \includegraphics[width=\textwidth]{figures/nn_permutations.drawio.pdf}
+    \caption{\label{fig:nn_sym}\textbf{Visual illustration of example permutation and scaling symmetries of neural networks.} \textit{Top}: Permuting the neurons at one layer and then applying the same permutation to the outgoing weights preserves the function being computed. \textit{Bottom:} For a ReLU activation, multiplying the input with a non-negative constant and the output with its inverse preserves the function. }    
+\end{figure}
 
 A typical neural network with non-linear activations has two main kinds of symmetries: \textit{permutation symmetries} and \textit{scaling symmetries}. Permutation symmetries arise from the connectivity structure of the neural network, and scaling symmetries mainly arise from the particular non-linearities. 
 
