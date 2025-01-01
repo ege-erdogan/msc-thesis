@@ -31,30 +31,50 @@ We keep this discussion short since the choice of a prior has tangential impact 
 
 \section{Inference} \label{section:bayesian_inference}
 
-\begin{itemize}
-    \item Variational methods
-    \item MCMC-based methods
-    \item Transformation-based methods (normalizing flow)
-\end{itemize}
+Inference in BNNs is a rich research area covering a wide range of methods. In this section we give an overview of key methods used to approximate BNN posteriors, and refer to works such as \citep{arbelPrimerBayesianNeural2023} and \citep{murphyProbabilisticMachineLearning2023} for more comprehensive treatments. 
 
-Laplace
+\subsection{Laplace Approximation}
 
-VI
+A Laplace approximation to the posterior \citep{mackayPracticalBayesianFramework1992} is essentially a Gaussian distribution centered at the MAP estimate of the posterior, with the covariance matrix given by the log likelihood's Hessian's inverse. This intuitiveyl corresponds to a local second-order Taylor expansion around the MAP estimate. 
 
-DE
+A Laplace approximation is simple and fast, but ignores the posterior's multi-modality as it only captures a single mode. Nevertheless, it has been an active topic of research \citep{daxbergerLaplaceReduxEffortless2021} due to its simplicity and for use cases benefiting from local posterior estimates. 
 
-MCMC introduction
+\subsection{Variational Inference}
 
-HMC
+In a variational approximation, the posterior is estimated with a parametric distribution whose parameters are learned to minimize the KL-divergence between the posterior and the variational approximation; e.g. learning the mean and covariance matrix of a Gaussian distribution. The parameters are often learned to optimize the evidence lower bound (ELBO) using reparametrization tricks \citep{kingmaAutoEncodingVariationalBayes2022b,blundellWeightUncertaintyNeural2015a}. 
 
-Highlight distinction between chain-based and transformation based sampling, using normalizing flows and connections to optimal transport etc 
+Variational approximatinos trade off expressivity for tractable optimization and thus can learn more complex distributions than a Gaussian, e.g. by accounting for symmetries in a neural network's posterior landscape \citep{gelbergVariationalInferenceFailures2024}. Nevertheless, KL-based objectives may require a large number of likelihood evaluations and often suffer from mode collapse, where the approximation captures only one mode of the distribution \citep{felardosDesigningLossesDatafree2023}. 
 
--- Stochastic -- 
+\subsection{Sampling-Based Inference}
 
-SG-MCMC
+Rather than parametrize or approximate the posterior distribution, sampling-based methods which our flow is a part of, attempt to sample from the posterior directly. Two main approaches to sampling are Monte Carlo methods \citep{barbuMonteCarloMethods2020} such as Markov chain Monte Carlo or importance sampling, and map-based methods \citep{marzoukSamplingMeasureTransport2016} such as normalizing flows \citep{rezendeVariationalInferenceNormalizing2015}.
 
-SG-HMC
+\subsubsection{Monte Carlo Methods}
 
-\section{Properties of Bayesian Neural Network Posteriors} \label{section:bayesian_properties}
+Monte carlo methods are designed around a few core ideas such that the samples are asymptotically from the true posterior, and are often used to compute expectations of the form
+\begin{equation} \label{eq:expectation}
+    \bbE_{x \sim p(x)} \left[ h(x) \right].
+\end{equation}
+A simple approach is Importance Sampling (IS) \citep{kahnMethodsReducingSample1953}, where samples from a proposal distribution $q$ are reweighted with $w(x) = p(x)/q(x)$ to estimate the expectation in Equation \ref{eq:expectation}:
+\begin{equation}
+    \bbE_{x \sim q(x)} \left[ \frac{p(x)}{q(x)} h(x) \right]
+    = \int q(x) \frac{p(x)}{q(x)} h(x) dx = \int p(x)h(x) dx = \bbE_{x \sim p(x)} \left[ h(x) \right].
+\end{equation}
+While IS does not require sampling from the posterior, the rate of convergence for the estimate depends on the variance of the IS weights, i.e. how well the proposal distribution aligns with the true posterior. 
 
-How they are like Boltzmann distributions, not arbitrary. 
+Alternatively, Markov chain Monte Carlo (MCMC) methods such Hamiltonian Monte Carlo \citep{nealMCMCUsingHamiltonian2011}, Stochastic Gradient Monte Carlo \citep{maCompleteRecipeStochastic2015}, or Langevin Monte Carlo \citep{robertsExponentialConvergenceLangevin1996} construct a Markov chain of samples that eventually converges (mixes) to the true posterior. This is often achieved through a Metropolis-Hastings correction step \citep{metropolisEquationStateCalculations1953,hastingsMonteCarloSampling1970} where a proposed step $z$ from the current state $x$ is accepted with probability 
+\begin{equation}
+    a(x,z) = \min \left\{ 1, \frac{p(z)}{p(x)} \frac{q(z,x)}{q(x,z)} \right\}
+\end{equation}
+where $q(x, z)$ gives the transition probability from $x$ to $z$. 
+
+While chain-based methods are heavily used in practice, they suffer from various shortcomings such as generating correlated rather than independent samples, and requiring a large number of likelihood evaluations some of which is later rejected. Measuring the convergence of a chain is also challenging, lacking concrete rules. 
+
+\subsubsection{Map-Based Sampling}
+
+Map-based methods \citep{marzoukSamplingMeasureTransport2016} are instead use a map $T:\R^n \to \R^n$ that transforms samples from the prior distribution $q$ to samples from the posterior $p$, such that the push-forward of the prior gives the posterior distribution: $T_\sharp  q = p$. Such a map can generate independent, uncorrelated samples without any likelihood evaluations which is a desirable property. 
+
+The theory of map-based sampling is closely related to optimal transport (OT) \citep{peyreComputationalOptimalTransport2020,santambrogioOptimalTransportApplied2015} with a history going back to the 18th century \citep{mongeMemoireTheorieDeblais1781}, where the goal is to find the map $T$ that minimizes some cost $c(x, T(x))$ such as Euclidean distance. Under the later relaxation of the problem by Kantorovich \citep{kantorovitchTranslocationMasses1958} to joint distributions rather than deterministic maps to minimize the cost over the joint distribution with marginal constraints, the optimal map is guaranteed to exists given mild conditions. 
+ 
+Nevertheless, while a map-based approach has benefits over an MCMC method such as providing less ambigous convergence criteria by reducing the problem to optimization, the optimal map is often hard to find, and therefore approximate maps are used instead. Such maps can be learned as static \citep{rezendeVariationalInferenceNormalizing2015} or continuous normalizing flows \citep{chenNeuralOrdinaryDifferential2018a} which have seen risign interest recently with developments such as flow matching which we now turn to. 
+
