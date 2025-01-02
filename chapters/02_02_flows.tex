@@ -15,7 +15,7 @@ Flow matching, first proposed in \citep{lipmanFlowMatchingGenerative2023,albergo
 \end{equation}
 and induces a \textit{flow} $\phi: [0,1] \times \R^d \to \R^d$ that gives the solution to the ODE at time $t$ with starting point $x_0$, such that 
 \begin{align}
-    \frac{d}{dt} \phi_t(x_0) &= u_t(\phi_t(x)) \\
+    \frac{d}{dt} \phi_t(x_0) &= u_t(\phi_t(x_0)) \\
     \phi_0(x_0) &= x_0.
 \end{align}
 Starting with $p_0$, transformed distributions $p_t$ can then be defined using this flow with the push-forward operation
@@ -51,7 +51,7 @@ Then similar to Equation \ref{eq:fm_objective}, we have the conditional flow mat
     \Lcfm := \bbE_{t \sim \U(0,1), z \sim q(z), x_t \sim p_t(x \mid z)}
     \Vert v_\theta(t, x_t) - u_t(x_t \mid z) \Vert ^2.
 \end{equation}
-That is, we first sample a conditioning variable $z$, and then regress to the \textit{conditional} vector field $u_t(x \mid z)$. Thus we obtain a tractable objective by defining sample-able conditional probability paths and a tractable conditional vector field. Moreover, as shown in \citep{tongImprovingGeneralizingFlowbased2023}, the FM and CFM objectives equivalent up to a constant and thus 
+That is, we first sample a conditioning variable $z$, and then regress to the \textit{conditional} vector field $u_t(x \mid z)$. Thus we obtain a tractable objective by defining sample-able conditional probability paths and a tractable conditional vector field. Moreover, as shown in \citep{tongImprovingGeneralizingFlowbased2023}, the FM and CFM objectives are equivalent up to a constant and therefore
 \begin{equation}
     \nabla_\theta \Lfm = \nabla_\theta \Lcfm,
 \end{equation}
@@ -59,12 +59,13 @@ meaning we do not lose the expressive power of the FM objective by regressing on
 
 \subsection{Training} \label{sec:fm_training}
 
-To sum up the discussion in the previous section, a step of training a flow model using CFM objective (Equation \ref{eq:cfm_objective}) proceeds as follows:
+To sum up the discussion in the previous section, a step of training a flow model using the CFM objective (Equation \ref{eq:cfm_objective}) proceeds as follows:
 \begin{enumerate}
     \item Sample $t \sim \U(0,1), z \sim q(z)$, and $x_t \sim p_t(x \mid z)$.
     \item Compute $\Lcfm = \Vert v_\theta(t, x_t) - u_t(x_t \mid z) \Vert ^2$.
     \item Update $\theta$ with $\nabla_\theta \Lcfm$.
 \end{enumerate}
+An equivalent approach with the loss computed in the space our data lies is to predict the target $x_1$ rather than the velocity and compute the loss as $\Vert v_\theta(t,x_t) - x_1 \Vert^2$, and the velocity as $v_\theta(t, x_t) - x_0$ with $x_0$ the starting point for integration. 
 
 \subsection{Couplings and Conditional Paths} \label{section:design_choices}
 
@@ -85,7 +86,7 @@ with the conditional paths and vector field defined as in Equations \ref{eq:cond
 
 \section{Riemannian Flow Matching} \label{sec:riemannian_fm}
 
-When our data lies on a manifold, flow matching can be extended to define a flow over the manifold as well. Such an approach can both lead to a better scalable generative model by reducing the effective dimensionality of the problem, and make learning easier by introducing a strong inductive bias to the problem.  Discrete and continuous normalizing flows have previously been adapted to Riemannian manifolds \citep{gemiciNormalizingFlowsRiemannian2016,mathieuRiemannianContinuousNormalizing2020,louNeuralManifoldOrdinary2020}. In this section, we first give a quick overview of Riemannian manifolds (we refer to textbooks on the topic such as \citep{johnm.leeIntroductionRiemannianManifolds2018} for a more rigorous treatment), and then explain how an ODE over a Riemannian manifold can be learned following the framework of Riemannian flow matching \citep{chenRiemannianFlowMatching2023}.\footnote{The presentation in this section is additionally based on the Geometric Generative Models tutorial by Joey Bose, Alexander Tong, and Heli Ben-Hamu at the 2024 Learning On Graphs Conference.} 
+When our data lies on a manifold, flow matching can be extended to define a flow over the manifold as well. Such an approach can both lead to a better scalable generative model by reducing the effective dimensionality of the problem, and make learning easier by introducing a strong inductive bias to the problem.  Discrete and continuous normalizing flows have previously been adapted to Riemannian manifolds \citep{gemiciNormalizingFlowsRiemannian2016,mathieuRiemannianContinuousNormalizing2020,louNeuralManifoldOrdinary2020}, and in this section we begin with a brief overview of Riemannian manifolds (we refer to textbooks on the topic such as \citep{johnm.leeIntroductionRiemannianManifolds2018} for a more rigorous treatment), and then explain how an ODE over a Riemannian manifold can be learned following the framework of Riemannian flow matching \citep{chenRiemannianFlowMatching2023}.\footnote{The presentation in this section is additionally based on the Geometric Generative Models tutorial by Joey Bose, Alexander Tong, and Heli Ben-Hamu at the 2024 Learning On Graphs Conference.} 
 
 \subsection{A Brief Review of Riemannian Manifolds}
 
@@ -94,7 +95,7 @@ When our data lies on a manifold, flow matching can be extended to define a flow
     \caption{\label{fig:manifolds}\textbf{Visualizing the exponential, logarithmic, and parallel transport maps on a manifold.} The unique geodesic curve $\gamma$ between $p$ and $q$ with $\dot \gamma(0) = \mathbf{v}$ corresponds to the great circle of the sphere coinciding with the upper boundary in the diagrams.}    
 \end{figure}
 
-Intuitively, a smooth \textit{manifold} $M$ is a smooth topological space that is locally Euclidean. The local Euclidean structure is represented by \textit{charts} mapping open sets $U \subset M$ to $\R^n$. A set of charts covering the entire manifold is called an \textit{atlas}, and smoothness arises from the transitions between overlapping charts being smooth functions. Each point $x \in M$ is equipped with a tangent space $T_x M$ that is a vector space containing vectors tangent to $M$. A Riemannian manifold also contains a Riemannian metric $g$ that defines an inner product $\langle u, v \rangle_g = u^T G v$ for $u, v \in T_x M$ and positive definite matrix $G$. A metric most importantly enables us to consider angles and distances over the manifold as $\Vert u \Vert_g = \sqrt{\langle u, u\rangle_g} = \sqrt{u^T G u}$ and $\cos \theta = \frac{\langle u, v \rangle_g}{\Vert u \Vert_g \Vert v \Vert_g}$. 
+A smooth \textit{manifold} $M$ is a smooth topological space that is locally Euclidean. The local Euclidean structure is represented by \textit{charts} mapping open sets $U \subset M$ to $\R^n$. A set of charts covering the entire manifold is called an \textit{atlas}, and smoothness arises from the transitions between overlapping charts being smooth functions. Each point $x \in M$ is equipped with a tangent space $T_x M$ that is a vector space containing vectors tangent to $M$, such as velocities. In addition to being a smooth manifold, a Riemannian manifold also contains a Riemannian metric $g$ that defines an inner product $\langle u, v \rangle_g = u^T G v$ for $u, v \in T_x M$ and positive definite matrix $G$. A metric most importantly enables us to define angles and distances over the manifold as $\Vert u \Vert_g = \sqrt{\langle u, u\rangle_g} = \sqrt{u^T G u}$ and $\cos \theta = \frac{\langle u, v \rangle_g}{\Vert u \Vert_g \Vert v \Vert_g}$. 
 
 A \textit{curve} is a smooth function $\gamma: [0, 1] \to M$, and tangent vectors $v \in T_x M$ can be expressed as time derivatives $\dot \gamma(t)$ of curves with $\gamma(t) = x$. Using the metric $g$, we can measure the length of a curve by computing the length of the tangent vector at each point along the curve:
 \begin{equation}
@@ -125,8 +126,6 @@ Finally to solve the ODE, we compute one Euler integration step as
 where $\Delta t$ is the step size. 
 
 
-\section{Sampling / Integration} \label{section:sampling_integration}
-
 \section{Computing Likelihoods} \label{section:computing_likelihoods}
 
 In earlier normalizing flows that aim to learn a static mapping between the two distributions \citep{rezendeVariationalInferenceNormalizing2015}, given source samples $x_0 \sim p_0$, likelihoods of the generated samples $z = f(x_0) \approx p_1$  can be computed exactly via the change of variables formula
@@ -141,7 +140,7 @@ In a \textit{continuous normalizing flow} on the other hand, the \textit{instant
     \frac{d \log p_t(\phi_t(x))}{dt} &= - \divergence(v_t(\phi_t(x))) \\
                                      &= - \trace \left( \frac{d v_t(\phi_t(x))}{dt} \right)
 \end{align}
-where $\frac{d v_t(\phi_t(x))}{dt} =: J_v(\phi_t(x))$ is the Jacobian of the vector field. Then we integrate over time to compute the full change in probability:
+where $\frac{d v_t(\phi_t(x))}{dt} =: J_v(\phi_t(x))$ is the Jacobian of the vector field. We integrate over time to compute the full change in probability:
 \begin{equation} \label{eq:full_continuous_cov}
     \log p_1(\phi_1(x)) = \log p_0(\phi_0(x)) - \int_0^1 \trace(J_v(\phi_t(x))) dt.
 \end{equation}
@@ -149,7 +148,7 @@ Then we can integrate the Jacobian trace of the vector field through time (simul
 
 \subsection{Faster Likelihoods Through Trace Estimation} \label{section:trace_estimation}
 
-However, materializing the full Jacobian of the vector field can be prohibitively expensive, especially if the task is high dimensional (as in our case) since the log determinant computation has a time complexity of $O(d^3)$ \citep{grathwohlFFJORDFreeformContinuous2018} without any restrictions on the structure of the Jacobian. 
+However, materializing the full Jacobian of the vector field can be prohibitively expensive, especially if the task is very high dimensional (as in our case) since the log determinant computation has a time complexity of $O(d^3)$ \citep{grathwohlFFJORDFreeformContinuous2018} without any restrictions on the structure of the Jacobian. 
 
 To alleviate this problem, \citep{grathwohlFFJORDFreeformContinuous2018} propose to use the \textit{Hutchinson trace estimator} \citep{hutchinsonStochasticEstimatorTrace1990} for an unbiased estimate of the Jacobian trace of a square matrix: 
 \begin{equation} \label{eq:hutchinson}

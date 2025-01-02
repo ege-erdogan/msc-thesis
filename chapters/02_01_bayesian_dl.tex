@@ -3,17 +3,17 @@
 
 \chapter{Bayesian Deep Learning}\label{section:bayesian_dl}
 
-A primary use case for a generative model over neural network weights is in Bayesian deep learning, where it can allow efficient inference by transporting the prior distribution to the posterior. Thus, to motivate the rest of the discussion, we first give an overview of concepts from Bayesian deep learning. Section \ref{section:bayesian_concepts} is a general introduction. It is followed by a review of inference methods (Laplace approximations, variational inference, MCMC-based methods) typically used for Bayesian neural networks, and we conclude with a review of literature around Bayesian deep learning particularly relevant for our work in Section \ref{section:bayesian_properties}.
+A primary use case for a generative model over neural network weights is in Bayesian deep learning, where it can allow efficient inference by transporting the prior distribution to the posterior. Thus, to motivate the rest of the discussion, we first give an overview of concepts from Bayesian deep learning. Section \ref{section:bayesian_concepts} is a general introduction, followed by a review of inference methods (Laplace approximations, variational inference, MCMC-based methods) typically used for Bayesian neural networks.
 
 \section{General Concepts} \label{section:bayesian_concepts}
 
-In typical Bayesian fashion, Bayesian deep learning (refer to \citep{mackayBayesianMethodsAdaptive1992, nealBayesianLearningNeural1996} for foundational work and \citep{goanBayesianNeuralNetworks2020,arbelPrimerBayesianNeural2023} for more recent reviews) aims to quantify the uncertainty in neural networks through probability distributions over their parameters, rather than obtaining a single solution by an SGD-like optimization method. Then, given the \textit{posterior} distribution $p(\theta \vert \calD)$ over weights $\theta$ conditioned on the dataset $\calD$, predictions are obtained via \textit{Bayesian model averaging}:
+Bayesian deep learning aims to quantify the uncertainty in neural networks through probability distributions over their parameters, rather than obtaining a single solution by an SGD-like optimization method (refer to \citep{mackayBayesianMethodsAdaptive1992, nealBayesianLearningNeural1996} for foundational work and \citep{goanBayesianNeuralNetworks2020,arbelPrimerBayesianNeural2023} for more recent reviews). With the \textit{posterior} distribution $p(\theta \vert \calD)$ over weights $\theta$ conditioned on the dataset $\calD$, predictions are obtained via \textit{Bayesian model averaging}:
 \begin{equation} \label{eq:model_averaging}
     p(y \vert x, \calD) 
     = \bbE_{\theta \sim p(\theta \vert \calD)} \left[ p(y\vert x, \theta) \right]
     = \int p(y \vert x, \theta) p(\theta \vert \calD) d\theta,
 \end{equation}
-where the prediction is averaged over the posterior over the weights. Note that since the forward pass through the model $p(y \vert x, \theta)$, is deterministic, the uncertainty in predictions results solely from the uncertainty over parameters. To bring things together, Bayesian inference over neural network weights consists of three steps:
+where the prediction is an expectation over the posterior. Note that since the forward pass through the model $p(y \vert x, \theta)$, is deterministic, the uncertainty in predictions results solely from the uncertainty over parameters. To bring things together, Bayesian inference over neural network weights consists of three steps:
 \begin{enumerate}
     \item Specify prior $p(\theta)$.
     \item Compute/sample posterior $p(\theta \vert \calD) \propto p(\calD \vert \theta) p(\theta)$.
@@ -23,9 +23,9 @@ The last step only requires forward passes through the model and thus is straigh
 
 \section{Priors}
 
-Specifiying a prior mainly consists of two choices: specifying an architecture, and specifying a probability distribution over the weights. The distribution is typically taken to be an isotropic Gaussian, which is an uninformative prior but straightforward to work with. 
+Specifiying a prior mainly consists of two choices: specifying an architecture, and specifying a probability distribution over the weights. A standard choice for a prior distribution is an isotropic Gaussian, which is an uninformative prior but therefore widely applicable and flexible. 
 
-Different architectural decisions also result in different functions, even if the flattened weight vectors are identical, meaning that the choice of an architecture further specifies a prior in function space. As a simple example, keeping the depth and width of a neural network constant, even just changing the activation function from a ReLU to a sigmoid results in a differnet distribution of functions. The functional distribution can also be specified in a more deliberate way; e.g. a translation-invariant convolutional neural network, or a group-equivariant network \citep{cohenGroupEquivariantConvolutional2016} puts probability mass only on functions satisfying certain equivariance constraints depending on the task at hand. 
+Different architectural decisions also induce different distributions over functions, even if the flattened weight vectors are identical, meaning that the choice of an architecture further specifies a prior in function space. As a simple example, keeping the depth and width of a neural network constant, even just changing the activation function from a ReLU to a sigmoid results in a different distribution of functions. The functional distribution can also be specified in a more deliberate way; e.g. a translation-invariant convolutional neural network, or a group-equivariant network \citep{cohenGroupEquivariantConvolutional2016} puts probability mass only on functions satisfying certain equivariance constraints depending on the task at hand. 
 
 We keep this discussion short since the choice of a prior has tangential impact in the rest of the presentation, and we refer to recent reviews such as \citep{fortuinPriorsBayesianDeep2022} for a more detailed treatment of Bayesian neural network priors. 
 
