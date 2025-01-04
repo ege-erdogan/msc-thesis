@@ -44,7 +44,7 @@ While we focus only on ReLU networks, this geometric formulation can be extended
 
 \section{Model Architecture}
 
-For each of our three flows, we model the vector field using a Relational Transformer with edge updates \citep{diaoRelationalAttentionGeneralizing2023,kofinasGraphNeuralNetworks2024}. For an MLP as the base model, each edge in the graph corresponds to a single weight, and nodes to individual bias values. We project each node and edge feature to $d_E$ dimensions using an MLP, and run a number of node/edge update steps before projecting the final node/edge states back to one dimension using an MLP. To distinguish nodes at different layers, we add layer-specific learned positional embeddings to edge features. 
+For each of our three flows, we experimented with the PNA and Relational Transformer architectures and decided to use the Relational Transformer model due to its superior performance. We thus model the vector field using a Relational Transformer with edge updates \citep{diaoRelationalAttentionGeneralizing2023,kofinasGraphNeuralNetworks2024}. For an MLP as the base model, each edge in the graph corresponds to a single weight, and nodes to individual bias values. We project each node and edge feature to $d_E$ dimensions using an MLP, and run a number of node/edge update steps before projecting the final node/edge states back to one dimension using an MLP. To distinguish nodes at different layers, we add layer-specific learned positional embeddings to edge features. 
 
 \section{Training}
 
