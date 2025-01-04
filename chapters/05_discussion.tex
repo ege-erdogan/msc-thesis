@@ -3,9 +3,11 @@
 
 \chapter{Conclusion \& Future Work} \label{chapter:discussion}
 
+
+
 \section{Future Directions}
 
-While we have demonstrated that generative models in weight-space trained via the flow matching objective can generate high-quality samples and that taking into account the geometry of the neural network weights can make such flows more effective, applying modern generative models to neural network weights is still an active problem with many fruitful potential future directions. {\color{cyan} I am not happy with this, maybe change after the rest is done.}
+While we have demonstrated that generative models in weight-space trained via the flow matching objective can generate high-quality samples and that taking into account the geometry of the neural network weights can make such flows more effective, applying modern generative models to neural network weights is still an active research area with many fruitful potential future directions and we outline a list of potential directions for future work in this section. 
 
 \subsection{More Fine-Grained Geometric Considerations}
 
@@ -28,9 +30,3 @@ Furthermore, the requirement of sample-based training can also be relaxed by uti
 While we sample using an Euler ODE solver and perform guidance during sampling only using the base task gradients, the sampling phase has a richer design space that can be utilized to obtain faster and more controllable flows. To begin with, higher-order ODE solvers can be used to reduce the approximation error to the learned vector field at the cost of longer sampling times. Distillation methods such as Flow Map Matching \citep{boffiFlowMapMatching2024} and Consistency Flow Matching \citep{yangConsistencyFlowMatching2024} can be utilized to instead speed up the sampling process.  
 
 Using a generative modeling framework such as flow matching also enables guidance methods beyond using task gradients. First, any differentiable objective can be used in place of the task loss to guide the sampling process. Performing classifier-free guidance is also possible for flow models \citep{zhengGuidedFlowsGenerative2023}, to instead condition the sampling process on a variable such as the desired loss, as also done in weight-space with diffusion models in \citet{peeblesLearningLearnGenerative2022}. Finally an alternative conditioning approach in flow matching is to differentiate through the ODE sampling process to optimize the initial point $x_0$ so that the solution $x_1$ minimizes a loss function \citep{ben-hamuDFlowDifferentiatingFlows2024}. This and future work for controllable sampling in flow models can be adapted to weight-space to condition flows on desired quantities or objectives such as adversarial robustness. 
-
-\subsection{Use Cases}
-\begin{itemize}
-    \item implicit neural representations, but not learning
-    \item 
-\end{itemize}
