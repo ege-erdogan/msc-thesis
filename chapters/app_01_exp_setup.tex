@@ -3,6 +3,12 @@
 
 \chapter{Experimental Setups}\label{appendix:experimental_setups}
 
+\section*{Implementation Details and Computational Resources}
+
+Our flows were primarily implemented in PyTorch \citep{paszkePyTorchImperativeStyle2019a}, building on the weight-space GNN and graph construction implementation of \citep{kofinasGraphNeuralNetworks2024} and with our custom flow matching implementation utilizing parts of the \texttt{torchcfm} package of \citep{tongImprovingGeneralizingFlowbased2023}. We have implemented a custom Euler solver to integrate our ODEs and used the \texttt{geoopt} package \citep{kochurovGeooptRiemannianOptimization2020} for geometric operations.
+
+Throughout the experiments, we train all our models using a combination of NVIDIA A100 an H100 GPUs, with each model being trained on a single GPU. The training times range from around 6 hours for the smaller Euclidean flows to approximately 40 hours for the larger Geometric flows, although our implementation was not fully optimized for efficiency. 
+
 \section*{Flow Between Gaussians (Section \ref{sec:gaussian_flow})}
 
 \subsection*{Data}
