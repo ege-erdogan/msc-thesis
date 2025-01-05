@@ -1,9 +1,11 @@
 % !TeX root = ../main.tex
 % Add the above to each chapter to make compiling the PDF easier in some editors.
 
-\chapter{Conclusion \& Future Work} \label{chapter:discussion}
+\chapter{Conclusion} \label{chapter:discussion}
 
+Deep generative models, applied to domains such as images \citep{esserScalingRectifiedFlow2024b} and molecules \citep{abramsonAccurateStructurePrediction2024} to great effect, often take into account various symmetries in thier data such as translation-invariance in images or rotational symmetries for molecules. Generative models applied to other neural networks' weights on the other hand, have so far only considered the permutation symmetries of neural networks, and not the scaling symmetries arising from the use of non-linear activations such as ReLU. We have thus attempted to address this gap, and showed that utilizing this geometric structure of neural networks in addition to the permutation symmetries helps build more effective generative models of neural network weights. 
 
+Using the flow matching framework, we have constructed three different kinds of flows with different ways of handling this geometry, and evaluated them in various use cases such as transfer learning, learned initialization, and Bayesian model averaging. Our results have demonstrated that often the fully geometric flow results in better performance, and that there are still gains to be expected by further scaling up our models. 
 
 \section{Future Directions}
 
