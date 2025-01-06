@@ -7,9 +7,9 @@ We now evaluate our three flows and various choices on different models and data
 \begin{itemize}
     \item As a sanity check, we can train a flow between two Gaussians, and stochastic sampling helps capture the variance in the posterior (Section \ref{sec:gaussian_flow}).
     \item On an easier task with a small model, all three flows can directly sample weights matching and even exceeding the quality of optimized weights (Section \ref{sec:uci_classification}).
-    \item The Geometric and Normalized paths' sample qualities plateau after a smaller number of integration steps, indicating shorter paths (Section \ref{sec:uci_classification}).
+    \item The Geometric and Normalized flows' sample qualities plateau after a smaller number of integration steps, indicating they learn shorter paths than the Euclidean flow (Section \ref{sec:uci_classification}).
     \item On a more difficult task and larger models, while individual samples perform worse than optimized weights, Bayesian model averaging with a small number of samples results in comparable performance (Section \ref{sec:sample_quality_diversity}).
-    \item A similar sample quality can also be transferred to similar tasks through guiding with task gradients during sampling (Section \ref{sec:task_generalization}).
+    \item A similar sample quality can also be transferred to other tasks through guiding with task gradients during sampling (Section \ref{sec:task_generalization}).
     \item Using the samples weights as initialization to train models on a different task leads to faster convergence (Section \ref{sec:task_generalization}).
     \item The Euclidean and Geometric flows succesfully generalize to a larger architecture on the same dataset, indicating they learn properties not only of the specific architecture but the underlying task (Section \ref{sec:arch_generalization}).
     \item There is still expected performance gains from using larger models than the ones we have used in our evaluations (Section \ref{sec:scaling}).
