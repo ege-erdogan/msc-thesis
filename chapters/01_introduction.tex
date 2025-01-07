@@ -26,12 +26,12 @@ The fundamental units of modern generative models such as diffusion and flow mod
 Being able to both sample from and evaluate the likelihood function of a complex distribution puts generative models in a unique place among similar methods. The likelihood function of variational approximations of neural network posteriors can also be evaluated, but they model considerably simpler distributions, while Markov chain Monte Carlo methods can sample from more complex multi-modal distributions but do not allow likelihood computations. Nevertheless, this power of generative models comes with increased computational demands during training and the need for careful architecture design. 
 
 
+\subsubsection*{Generative Models, Geometry, and Neural Network Weights}
 
-{\color{red}
-\subsubsection*{Geometric Generative Models}
-why geometry etc? check tutorial slides}
+Geometric generative models that model the geometry of their domain by invariance/equivariance constraints \citep{kleinEquivariantFlowMatching2023a}, parametrizing their data points on manifolds \citep{chenRiemannianFlowMatching2023}, or learning a manifold structure from data points alone \citep{kapusniakMetricFlowMatching2024} have been applied to a wide range problems from climate modeling \citep{bodnarAuroraFoundationModel2024} to protein design \citep{boseSE3StochasticFlowMatching2024}. By baking in the correct inductive biases from the start rather than expecting a model to learn them from scratch or through data augmentation, such geometric models make training more data-efficient. 
 
-\citep{kleinEquivariantFlowMatching2023a} \citep{bodnarAuroraFoundationModel2024}
+It is thus a logical first-step, especially for high-dimensional and multi-modal distributions such as neural network posteriors, to model the geometric structure of the data as accurately as possible. In particular for deep neural networks, their non-identifiability - there being multiple parametrizations of the same function, is a key reason behind this multi-modality, and it is hypothesized that the modes in a neural network posterior are actually linearly connected up to function-preserving permutations \citep{entezariRolePermutationInvariance2022}. Together, these considerations motivate that weight-space learning tasks can be considerably simplified through appropriate geometric modeling choices. 
+
 
 \section{Overview}
 
@@ -62,3 +62,13 @@ We then compare our three flows: first a Euclidean flow that ignores the scaling
 \subsubsection{Overview of Results (Chapter \ref{chapter:results})}
 
 We evaluate our flows on a variety of tasks after training them on samples obtained with gradient-based optimization methods and show that for small networks on relatively easier tasks, they can directly generate weights matching or sometimes exceeding the performance of weights optimized with gradient-based methods. On more complex tasks and larger models, while direct generation does not match the quality of optimized weights, Bayesian model averaging over a number of samples leads to comparable predictive performance. Then we show that a flow trained on weights from one task can be transferred to another task, either by using the sampled weigths as learned initializations, or by guiding the sampling process with task gradients. Our results finally demonstrate that in particular the Euclidean and Geometric flows can also generalize to different architectures for the same base task, and that there are still gains to be made by further scaling up our models. 
+
+\section{Contributions}
+
+Our main contributions are as follows:
+\begin{itemize}
+    \item We utilize flow matching in weight-space for the first time. Our Euclidean flow learns to transport weights in Euclidean space directly, then we model the neural networks on a product manifold by removing their scaling symmetries to build our Normalized flow, and finally in our Geometric flow we utilize the Riemannian Flow Matching framework to define a vector field over this product manifold. 
+    \item We empirically validate our proposed methods by learning to approximate the posterior distributions of neural networks of various sizes on different tasks. We observe that they can generate samples competitive with weights optimized via gradient-based methods, and that can still be scaled up for better performance. 
+    \item We show that our flows can also generalize to different architectures, such as by sampling more accurate weights for a larger mode. This indicates they do not learn to model just a single posterior distribution, but instead learn to model weights on the underlying task more generally. 
+    \item Finally we apply guidance with task gradients during sampling as an instance of transfer learning and show that a flow built with weights trained on one dataset can be used to sample weights that are accurate on another dataset. 
+\end{itemize}
