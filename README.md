@@ -2,7 +2,7 @@
 
 Informatics MSc Thesis @ TUM 
 
-[Click to open the PDF](https://github.com/ege-erdogan/msc-thesis/blob/master/main.pdf)
+[Click to view the PDF](https://erdogan.dev/thesis.pdf)
 
 **Abstract**
 
