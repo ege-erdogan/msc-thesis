@@ -1,6 +1,8 @@
 # Geometric Flow Models over Neural Network Weights 
 
-Informatics MSc Thesis @ TUM
+Informatics MSc Thesis @ TUM 
+
+[Click to open the PDF](https://github.com/ege-erdogan/msc-thesis/blob/master/main.pdf)
 
 **Abstract**
 
