@@ -5,13 +5,13 @@
 
 We now evaluate our three flows and various choices on different models and datasets. The main experimental outcomes can be summarized as follows:
 \begin{itemize}
-    \item As a sanity check, we can train a flow between two Gaussians, and stochastic sampling helps capture the variance in the posterior (Section \ref{sec:gaussian_flow}).
+    \item As a sanity check, we can train a flow between two Gaussian distributions, and stochastic sampling helps capture the variance in the posterior (Section \ref{sec:gaussian_flow}).
     \item On an easier task with a small model, all three flows can directly sample weights matching and even exceeding the quality of optimized weights (Section \ref{sec:uci_classification}).
     \item The Geometric and Normalized flows' sample qualities plateau after a smaller number of integration steps, indicating they learn shorter paths than the Euclidean flow (Section \ref{sec:uci_classification}).
     \item On a more difficult task and larger models, while individual samples perform worse than optimized weights, Bayesian model averaging with a small number of samples results in comparable performance (Section \ref{sec:sample_quality_diversity}).
     \item A similar sample quality can also be transferred to other tasks through guiding with task gradients during sampling (Section \ref{sec:task_generalization}).
     \item Using the samples weights as initialization to train models on a different task leads to faster convergence (Section \ref{sec:task_generalization}).
-    \item The Euclidean and Geometric flows succesfully generalize to a larger architecture on the same dataset, indicating they learn properties not only of the specific architecture but the underlying task (Section \ref{sec:arch_generalization}).
+    \item The Euclidean and Geometric flows successfully generalize to a larger architecture on the same dataset, indicating they learn properties not only of the specific architecture but the underlying task (Section \ref{sec:arch_generalization}).
     \item There is still expected performance gains from using larger models than the ones we have used in our evaluations (Section \ref{sec:scaling}).
 \end{itemize}
 
@@ -38,7 +38,7 @@ We describe the detailed experimental setups in Appendix \ref{appendix:experimen
 
 To verify our approach of learning a flow model in weight-space, we begin our evaluation the toy task of learning a flow between two Gaussian distributions. The neural network is a small MLP with 30 input, two output dimensions, and two hidden layers of 16 neurons. We sample $X_0 \sim p_0 := \N(0, \mathbf{I})$ and $X_1 \sim p_1 := \N(1, \mathbf{I})$, and train our Euclidean flow to map $p_0$ to $p_1$ with independent coupling $q(x_0, x_1) = p_0(x_0)p_1(x_1)$. This is a relatively simpler task than learning over actual weights since each dimension of the weight vectors is sampled independently. 
 
-Figure \ref{fig:gaussian-results} shows histograms of the means of the weights sampled from the flow with 100 Euler steps, and either deterministic or stochastic $(\varepsilon=0.05)$ sampling. Independent of the sampling method used, the flow covers the high-density center of the target distribution well, but the weights sampled deterministically fail to capture the variance in the target distribution. Stochastic sampling however appears to correct for this over-saturation and leads to more diverse samples. Overall, these results validates the feasability of learning a flow model in weight-space using graph neural networks, and we move on to tasks involving actual learned weights. 
+Figure \ref{fig:gaussian-results} shows histograms of the means of the weights sampled from the flow with 100 Euler steps, and either deterministic or stochastic $(\varepsilon=0.05)$ sampling. Independent of the sampling method used, the flow covers the high-density center of the target distribution well, but the weights sampled deterministically fail to capture the variance in the target distribution. Stochastic sampling however appears to correct for this over-saturation and leads to more diverse samples. Overall, these results validates the feasibility of learning a flow model in weight-space using graph neural networks, and we move on to tasks involving actual learned weights. 
 
 \begin{figure}[t!]
     \centering
@@ -87,7 +87,7 @@ After the toy Gaussian example, we move on to a relatively simple classification
 
 In addition to the availability of a large number of trained weights, this setup represents a preferable scenario in the sense that aligning all weights to a single reference eliminates the loss barriers between them to a large extent. Figure \ref{fig:uci_alignment} shows the pair-wise loss barriers (midpoint of the linear interpolation) before and after alignment for 250 randomly sampled weights from the set of Adam-optimized weights. The loss barriers are reduced considerably (from an average of 0.244 to 0.07) which supports the linear mode connectivity hypothesis for this setup. This should presumably make it easier to approximate the posterior distribution, as in the extreme case of zero-loss barriers between \textit{all} pairs of weights and assuming they capture all the modes, the posterior would be convex. 
 
-\textbf{Sample Quality.} Table \ref{tab:uci_class_table} compares the predictive quality of the samples generated by different flows with or without alignment and mini-batch OT couplings. All flows can generate samples with almost perfect accuracy, matching or exceeding (although not significanly) the performance of Adam-optimized weights. Noticeably, the Geometric flow generates samples with lower loss than the Normalized flow, highlighting the benefit of modeling the vector field over the product geometry of normalized weights as well. Aligning all the weights to a reference before training, and training the flow with mini-batch OT couplings both decrease the loss of the generated samples for the Euclidean flow, but the same effect is not visible for the Normalized and Geometric flows. 
+\textbf{Sample Quality.} Table \ref{tab:uci_class_table} compares the predictive quality of the samples generated by different flows with or without alignment and mini-batch OT couplings. All flows can generate samples with almost perfect accuracy, matching or exceeding (although not significantly) the performance of Adam-optimized weights. Noticeably, the Geometric flow generates samples with lower loss than the Normalized flow, highlighting the benefit of modeling the vector field over the product geometry of normalized weights as well. Aligning all the weights to a reference before training, and training the flow with mini-batch OT couplings both decrease the loss of the generated samples for the Euclidean flow, but the same effect is not visible for the Normalized and Geometric flows. 
 
 \begin{figure}[t!]
     \centering
@@ -126,7 +126,7 @@ This corresponds to a harder task than the UCI classification of the previous se
         \textbf{Target}         & 0.933 ± 0.009 & 0.231 ± 0.027 & 0.00002 ± 0.00001  \\
         \bottomrule
     \end{tabular}
-    \caption{\label{tab:mnist_class_table}\textbf{Test accuracy, loss ($\pm$ std), and diversity of the samples generated by flows for classification on the MNIST dataset after alignment.} Geometric flow with OT couplings results in the beft-performing samples, but most flows are within one standard deviation of each other. }
+    \caption{\label{tab:mnist_class_table}\textbf{Test accuracy, loss ($\pm$ std), and diversity of the samples generated by flows for classification on the MNIST dataset after alignment.} Geometric flow with OT couplings results in the best-performing samples, but most flows are within one standard deviation of each other. }
 \end{table}
 
 \begin{figure}[t!]
@@ -174,10 +174,10 @@ Figure \ref{fig:mnist_steps} shows how sample quality varies with the number of 
         \caption{OT Couplings}
     \end{subfigure}
     % \includegraphics[width=0.7\linewidth]{figures/mnist/mnist_model_averaging.png}
-    \caption{\label{fig:mnist_averaging}\textbf{Accuracy of the predictions averaged over various numbers of samples from the flows' pushforward distributions, comparing independent and OT couplings.} The Euclidean flow shows the highest accuracy, reaching the accuracy of individual SGD-optimized weights.} 
+    \caption{\label{fig:mnist_averaging}\textbf{Accuracy of the predictions averaged over various numbers of samples from the flows' push-forward distributions, comparing independent and OT couplings.} The Euclidean flow shows the highest accuracy, reaching the accuracy of individual SGD-optimized weights.} 
 \end{figure}
 
-We now evaluate the predictive performance of the sampled weights after Bayesian model averaging; i.e. for each flow, we sample from its pushforward distribution $\hat p_1 (\theta)$ and compute a Monte Carlo estimate for the expectation $\bbE_{\hat p_1 (\theta)} \left[ p(y\vert x, \theta) \right]$, as in Equation \ref{eq:model_averaging}. Figure \ref{fig:mnist_averaging} displays the accuracy of predictions averaged over increasing numbers of samples from $\hat p_1$, comparing our three flows as well as independent and mini-batch OT couplings. With independent couplings, the Euclidean flow results in the highest acuracies, noticeably reaching the accuracy of individual SGD-optimized weights. 
+We now evaluate the predictive performance of the sampled weights after Bayesian model averaging; i.e. for each flow, we sample from its push-forward distribution $\hat p_1 (\theta)$ and compute a Monte Carlo estimate for the expectation $\bbE_{\hat p_1 (\theta)} \left[ p(y\vert x, \theta) \right]$, as in Equation \ref{eq:model_averaging}. Figure \ref{fig:mnist_averaging} displays the accuracy of predictions averaged over increasing numbers of samples from $\hat p_1$, comparing our three flows as well as independent and mini-batch OT couplings. With independent couplings, the Euclidean flow results in the highest accuracies, noticeably reaching the accuracy of individual SGD-optimized weights. 
 
 Training the flows with OT couplings improves the predictive performance of all three after model averaging. The improvement for the Geometric flow is more significant than that of the Euclidean and Normalized flows, moving from $\sim87\%$ to $~94\%$. This supports the results in Table \ref{tab:mnist_class_table} that the Geometric flow benefits the most from OT couplings. 
 
@@ -209,7 +209,7 @@ As a potential use case of our flows, we now evaluate the effectiveness of a flo
     \item Initialize model with sampled weights and train on the target dataset.
 \end{enumerate}
 
-First, Table \ref{tab:mnist_generalization} shows the performance (on Fashion-MNIST) of samples from flows trained with MNIST weights but sampled with guidance from the Fashion-MNIST task gradients over 512 Euler steps. First, expectedly, the last row of the table shows that samples obtained directly from the MNIST flows without guidance achieve an average accuracy of 8\%, which is not better than random guessing. However, although the accuracy of the base model after optimization with Adam is slighly lower for Fashion-MNIST compared to MNIST, samples from all three flows achieve a test accuracy of at least 72\%, which is similar performance of the samples obtained without guidance from the same flows on MNIST. 
+First, Table \ref{tab:mnist_generalization} shows the performance (on Fashion-MNIST) of samples from flows trained with MNIST weights but sampled with guidance from the Fashion-MNIST task gradients over 512 Euler steps. First, expectedly, the last row of the table shows that samples obtained directly from the MNIST flows without guidance achieve an average accuracy of 8\%, which is not better than random guessing. However, although the accuracy of the base model after optimization with Adam is slightly lower for Fashion-MNIST compared to MNIST, samples from all three flows achieve a test accuracy of at least 72\%, which is similar performance of the samples obtained without guidance from the same flows on MNIST. 
 
 These results highlight that even though the flows are trained on weights obtained over one dataset, they can capture some salient features shared across optimization landscapes, and can be adapted to different datasets without having to train them from scratch, in this case only by guiding the sampling process with task gradients which is significantly cheaper than training the entire flow from scratch.  
 
@@ -267,10 +267,10 @@ Since a GNN is by design not limited to a certain graph structure, our weight-sp
         \includegraphics[width=\linewidth]{figures/mnist/mnist_d_E_loss.png}
         \caption{\label{scale_loss}Test Loss}
     \end{subfigure}
-    \caption{\label{fig:scaling}\textbf{Sample predictive performance with incrasing model size}, characterized by the node/edge feature dimension $d_E$. The upward trajectory in Figure \ref{scale_acc} and the downwards trajectory in Figure \ref{scale_loss} implies that there are still performance gains to be achieved by using larger models.} 
+    \caption{\label{fig:scaling}\textbf{Sample predictive performance with increasing model size}, characterized by the node/edge feature dimension $d_E$. The upward trajectory in Figure \ref{scale_acc} and the downwards trajectory in Figure \ref{scale_loss} implies that there are still performance gains to be achieved by using larger models.} 
 \end{figure}
 
-We conclude our evaluations by measuring if there is performance gains to be expected by using larger flow models than the ones we have considered so far. We thus train flow models with different node/edge feature dimensions ($d_E$) for the same number of iterations, and evalaute their sample qualities. The largest model, with 32 dimensional features, has approximately 146K parameters while the smallest model with 8 dimensional features has approximately 15K parameters. 
+We conclude our evaluations by measuring if there is performance gains to be expected by using larger flow models than the ones we have considered so far. We thus train flow models with different node/edge feature dimensions ($d_E$) for the same number of iterations, and evaluate their sample qualities. The largest model, with 32 dimensional features, has approximately 146K parameters while the smallest model with 8 dimensional features has approximately 15K parameters. 
 
 Figure \ref{fig:scaling} displays the quality of the generated samples for flow models with 8, 16, and 32 dimensional features. While the Geometric flow achieves the most accurate samples for each model size, the upwards trajectories for the test accuracies and the downwards trajectories for the test losses common to all three kinds of flows indicate that there are performance gains to be expected by using larger models. 
 

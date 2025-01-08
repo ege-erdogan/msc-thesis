@@ -21,7 +21,7 @@ The first step in designing a flow is to determine the space our data lies in. W
 
 \subsection{Euclidean Flow}
 
-Our first method we call the Euclidean flow is defined in Euclidean space, and the trained weights are used directly, without any transformations except permutation alignment (rebasin) to a common reference. Following the presentation in Section \ref{section:flow_matching}, we define the ground truth vector field as $x_1 - x_0$. Such a flow can be straightforwardly applied to any neural network, but ignores the scaling symmetries resulting from activations such as ReLU. 
+Our first method we call the Euclidean flow is defined in Euclidean space, and the trained weights are used directly, without any transformations except permutation alignment (re-basin) to a common reference. Following the presentation in Section \ref{section:flow_matching}, we define the ground truth vector field as $x_1 - x_0$. Such a flow can be straightforwardly applied to any neural network, but ignores the scaling symmetries resulting from activations such as ReLU. 
 
 \begin{figure}[t!]
     \centering
@@ -39,7 +39,7 @@ This procedure embeds neural network weights in a product geometry. Each interme
 
 Since hyperspheres, as well as the Euclidean space and a product of Riemannian manifolds, are Riemannian manifolds, we can model vector fields over them using the framework of Riemannian flow matching \citep{chenRiemannianFlowMatching2023} (Section \ref{sec:riemannian_fm}). For the bias vectors in Euclidean space, we again define $u_t := x_1 - x_0$ and $x_t = t x_1 + (1-t) x_0$. For intermediate neurons and the last layer on different hyperspheres, we have $x_t = \exp_{x_0}(t \log_{x_0}x_1)$ and $u_t = \log_{x_t}(x_1) / (1-t)$. This formulation, while computationally more expensive, has the added potential benefit that all inputs including the intermediate points $x_t$ to our model will lie on this particular geometry, reducing the effective dimensionality of the problem. 
 
-While we focus only on ReLU networks, this geometric formulation can be extended to other nonlinearities as they also induce different kinds of scaling symmetries \citep{godfreySymmetriesDeepLearning2022}. 
+While we focus only on ReLU networks, this geometric formulation can be extended to other non-linearities as they also induce different kinds of scaling symmetries \citep{godfreySymmetriesDeepLearning2022}. 
 
 \section{Model Architecture}
 
@@ -47,8 +47,7 @@ For each of our three flows, we experimented with the PNA and Relational Transfo
 
 \section{Training}
 
-We train our models using the conditional flow matching \textbf{objective} (Equation \ref{eq:cfm_objective}), but rather than predict the velocity $u_t$, we predict the target point $x_1$ and compute the velocity during integration using the initial point $x_0$ and intermediate point $x_t$.
-This makes training easier to analyze as the error in weight-space is more directly informative, and we can constrain the outputs to the particular geometry for the Normalized and Geometric flows. 
+We train our models using the conditional flow matching \textbf{objective} (Equation \ref{eq:cfm_objective}), but rather than predict the velocity $u_t$, we predict the target point $x_1$ and compute the velocity during integration using the initial point $x_0$ and intermediate point $x_t$. This makes training easier to analyze as the error in weight-space is more directly informative, and we can constrain the outputs to the particular geometry for the Normalized and Geometric flows. 
 
 \begin{wrapfigure}{r}{0.4\textwidth}
     \centering
@@ -56,7 +55,7 @@ This makes training easier to analyze as the error in weight-space is more direc
     \caption{\label{fig:beta}\textbf{PDF of $\text{Beta}(1,2)$.} We sample $t\sim \text{Beta}(1,2)$ rather than uniformly when training our flow model.}
 \end{wrapfigure}
 
-As \textbf{prior} distributions $p_0$, we use isotropic Gaussians of different variances, ensuring that the prior distribution is the same as the distribution used to initialize the weights while training the base model, although this is not a strict requirement and our flow models can be trained with arbitrary priors. We also experiment with independent and mini-batch optimal transport \textbf{couplings}, although especially in high-dimensions the bias induced by the mini-batch approximation to optimal transport can be significant \citep{fatrasMinibatchOptimalTransport2021}. 
+As \textbf{prior} distributions $p_0$, we use isotropic Gaussian distributions of different variances, ensuring that the prior distribution is the same as the distribution used to initialize the weights while training the base model, although this is not a strict requirement and our flow models can be trained with arbitrary priors. We also experiment with independent and mini-batch optimal transport \textbf{couplings}, although especially in high-dimensions the bias induced by the mini-batch approximation to optimal transport can be significant \citep{fatrasMinibatchOptimalTransport2021}. 
 
 As another modification over the standard flow matching framework, we sample \textbf{time} $t \in (0,1)$  during training not uniformly, but following $\text{Beta}(1,2)$ (Figure \ref{fig:beta}). Since $x_t$ with smaller $t$ are further away from $x_1$, estimation error increases for smaller time values. Sampling $t \sim \text{Beta}(1,2)$ results in a larger number of parameter updates for smaller $t$ relative to larger $t$, which is a more effective distribution of the computational budget since the predictions for larger $t$ are closer to $x_1$ and thus converge in fewer steps. Importantly, sampling $t \sim \text{Beta}(1,2)$ does not bias the training process, since a prediction at a certain time is independent of the model behavior at other times. 
 

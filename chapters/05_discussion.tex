@@ -3,7 +3,7 @@
 
 \chapter{Conclusion} \label{chapter:discussion}
 
-Deep generative models, applied to domains such as images \citep{esserScalingRectifiedFlow2024b} and molecules \citep{abramsonAccurateStructurePrediction2024} to great effect, often take into account various symmetries in thier data such as translation-invariance in images or rotational symmetries for molecules. Generative models applied to other neural networks' weights on the other hand, have so far only considered the permutation symmetries of neural networks, and not the scaling symmetries arising from the use of non-linear activations such as ReLU. We have thus attempted to address this gap, and showed that utilizing this geometric structure of neural networks in addition to the permutation symmetries helps build more effective generative models of neural network weights. 
+Deep generative models, applied to domains such as images \citep{esserScalingRectifiedFlow2024b} and molecules \citep{abramsonAccurateStructurePrediction2024} to great effect, often take into account various symmetries in their data such as translation-invariance in images or rotational symmetries for molecules. Generative models applied to other neural networks' weights on the other hand, have so far only considered the permutation symmetries of neural networks, and not the scaling symmetries arising from the use of non-linear activations such as ReLU. We have thus attempted to address this gap, and showed that utilizing this geometric structure of neural networks in addition to the permutation symmetries helps build more effective generative models of neural network weights. 
 
 Using the flow matching framework, we have constructed three different kinds of flows with different ways of handling this geometry, and evaluated them in various use cases such as transfer learning, learned initialization, and Bayesian model averaging. Our results have demonstrated that often the fully geometric flow results in better performance, and that there are still gains to be expected by further scaling up our models. 
 
@@ -19,7 +19,7 @@ Different activation functions also induce different symmetries \citep{godfreySy
 
 Another future direction related to symmetries in weight-space is to account for data-dependent symmetries \citep{zhaoSymmetriesFlatMinima2023} that arise from the data the model is trained on rather than the static symmetries in the previous paragraph that are valid for all instantiations of the same architecture. Recent work attempting to find these symmetries in an automated way \citep{zhaoFindingSymmetryNeural2024} can also be useful building blocks in this light. 
 
-Finally, certain functional constraints in neural networks such as group equivariance are often imposed through constraints on the neural networks' weights \citep{weilerEquivariantCoordinateIndependent2023}. If the base model has such constraints, accounting for them while designing the flow as well could reduce the effective dimensionality of the problem considerably and lead to more effcient flows. 
+Finally, certain functional constraints in neural networks such as group equivariance are often imposed through constraints on the neural networks' weights \citep{weilerEquivariantCoordinateIndependent2023}. If the base model has such constraints, accounting for them while designing the flow as well could reduce the effective dimensionality of the problem considerably and lead to more efficient flows. 
 
 \subsection{Generative Modeling and Training}
 

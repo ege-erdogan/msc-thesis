@@ -23,7 +23,7 @@ The last step only requires forward passes through the model and thus is straigh
 
 \section{Priors}
 
-Specifiying a prior mainly consists of two choices: specifying an architecture, and specifying a probability distribution over the weights. A standard choice for a prior distribution is an isotropic Gaussian, which is an uninformative prior but therefore widely applicable and flexible. 
+Specifying a prior mainly consists of two choices: specifying an architecture, and specifying a probability distribution over the weights. A standard choice for a prior distribution is an isotropic Gaussian, which is an uninformative prior but therefore widely applicable and flexible. 
 
 Different architectural decisions also induce different distributions over functions, even if the flattened weight vectors are identical, meaning that the choice of an architecture further specifies a prior in function space. As a simple example, keeping the depth and width of a neural network constant, even just changing the activation function from a ReLU to a sigmoid results in a different distribution of functions. The functional distribution can also be specified in a more deliberate way; e.g. a translation-invariant convolutional neural network, or a group-equivariant network \citep{cohenGroupEquivariantConvolutional2016} puts probability mass only on functions satisfying certain equivariance constraints depending on the task at hand. 
 
@@ -35,7 +35,7 @@ Inference in BNNs is a rich research area covering a wide range of methods. In t
 
 \subsection{Laplace Approximation}
 
-A Laplace approximation to the posterior \citep{mackayPracticalBayesianFramework1992} is essentially a Gaussian distribution centered at the MAP estimate of the posterior, with the covariance matrix given by the log likelihood's Hessian's inverse. This intuitiveyl corresponds to a local second-order Taylor expansion around the MAP estimate. 
+A Laplace approximation to the posterior \citep{mackayPracticalBayesianFramework1992} is essentially a Gaussian distribution centered at the MAP estimate of the posterior, with the covariance matrix given by the log likelihood's Hessian's inverse. This intuitively corresponds to a local second-order Taylor expansion around the MAP estimate. 
 
 A Laplace approximation is simple and fast, but ignores the posterior's multi-modality as it only captures a single mode. Nevertheless, it has been an active topic of research \citep{daxbergerLaplaceReduxEffortless2021} due to its simplicity and for use cases benefiting from local posterior estimates. 
 
@@ -43,7 +43,7 @@ A Laplace approximation is simple and fast, but ignores the posterior's multi-mo
 
 In a variational approximation, the posterior is estimated with a parametric distribution whose parameters are learned to minimize the KL-divergence between the posterior and the variational approximation; e.g. learning the mean and covariance matrix of a Gaussian distribution. The parameters are often learned to optimize the evidence lower bound (ELBO) using reparametrization tricks \citep{kingmaAutoEncodingVariationalBayes2022b,blundellWeightUncertaintyNeural2015a}. 
 
-Variational approximatinos trade off expressivity for tractable optimization and thus can learn more complex distributions than a Gaussian, e.g. by accounting for symmetries in a neural network's posterior landscape \citep{gelbergVariationalInferenceFailures2024}. Nevertheless, KL-based objectives may require a large number of likelihood evaluations and often suffer from mode collapse, where the approximation captures only one mode of the distribution \citep{felardosDesigningLossesDatafree2023}. 
+Variational approximations trade off expressivity for tractable optimization and thus can learn more complex distributions than a Gaussian, e.g. by accounting for symmetries in a neural network's posterior landscape \citep{gelbergVariationalInferenceFailures2024}. Nevertheless, KL-based objectives may require a large number of likelihood evaluations and often suffer from mode collapse, where the approximation captures only one mode of the distribution \citep{felardosDesigningLossesDatafree2023}. 
 
 \subsection{Sampling-Based Inference}
 
@@ -55,7 +55,7 @@ Monte carlo methods are designed around a few core ideas such that the samples a
 \begin{equation} \label{eq:expectation}
     \bbE_{x \sim p(x)} \left[ h(x) \right].
 \end{equation}
-A simple approach is Importance Sampling (IS) \citep{kahnMethodsReducingSample1953}, where samples from a proposal distribution $q$ are reweighted with $w(x) = p(x)/q(x)$ to estimate the expectation in Equation \ref{eq:expectation}:
+A simple approach is Importance Sampling (IS) \citep{kahnMethodsReducingSample1953}, where samples from a proposal distribution $q$ are re-weighted with $w(x) = p(x)/q(x)$ to estimate the expectation in Equation \ref{eq:expectation}:
 \begin{equation}
     \bbE_{x \sim q(x)} \left[ \frac{p(x)}{q(x)} h(x) \right]
     = \int q(x) \frac{p(x)}{q(x)} h(x) dx = \int p(x)h(x) dx = \bbE_{x \sim p(x)} \left[ h(x) \right].
