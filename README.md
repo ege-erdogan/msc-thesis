@@ -11,3 +11,16 @@ Informatics MSc Thesis @ TUM
 > In this light, we aim to design generative models in weight-space that more comprehensively respect the symmetries of neural network weights. We build on recent work on generative modeling with flow matching, and weight-space graph neural networks to design three different weight-space flows. Each of our flows takes a different approach to modeling the geometry of neural network weights, and thus allows us to explore the design space of weight-space flows in a principled way. Our results confirm that modeling the geometry of neural networks more faithfully leads to more effective flow models that can generalize to different tasks and architectures, and we show that while our flows obtain competitive performance with orders of magnitude fewer parameters than previous work, they can be further improved by scaling them up. We conclude by listing potential directions for future work on weight-space generative models.
 
 ![](figures/weightflow.png)
+
+## Cite
+
+If you want to refer to our work, please cite it as
+```
+@mastersthesis{erdogan2025geometric,
+    author = {Erdogan, Ege},
+    title = {Geometric Flow Models over Neural Network Weights},
+    school = {Technical University of Munich},
+    year = {2025},
+    type = {Master's thesis}    
+}
+```
